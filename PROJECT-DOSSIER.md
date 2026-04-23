@@ -84,6 +84,58 @@ Native mobile app for the CarMarket365 car marketplace. This app consumes the **
 - `createInquiry(createInquiryInput)` → CarInquiry
 - `uploadCarImages(carId, files)` → [CarImage]
 
+### GraphQL Input Types (exact fields & validation)
+
+**LoginInput:**
+- `email` (required) — valid email format
+- `password` (required) — minimum 6 characters
+
+**RegisterInput:**
+- `email` (required) — valid email format
+- `password` (required) — 8-128 characters, must contain: 1 uppercase, 1 lowercase, 1 number
+- `name` (optional) — display name
+- `dealerName` (optional) — if provided, user gets DEALER role
+- `dealerAddress`, `dealerCity`, `dealerPhoneNumber` (optional)
+
+**CreateCarInput (required fields marked with *):**
+- `make`*, `model`*, `year`* (1900 to current+1), `price`* (min 0), `mileage`* (min 0)
+- `fuelType`*, `transmission`*, `location`* (max 255 chars)
+- `vehicleType` (optional, defaults to CAR), `condition` (optional, defaults to USED)
+- `description` (optional, max 5000 chars), `vin` (optional, max 17 chars)
+- `engineSize`, `horsePower` (min 0), `doors` (2-6), `seats` (1-10)
+- `warrantyMonths` (0-120), `previousOwners` (1-10)
+- `features`, `safetyFeatures` (max 50 items each)
+- `color`, `interiorColor`, `drivetrain`, `contactPhone`, `contactEmail`
+- `priceNegotiable`, `quickSale`, `allowTestDrive`, `acceptsTradeIn`
+- `latitude`, `longitude`, `city`, `region`, `countryCode`
+
+**UpdateCarInput:** Same as CreateCarInput but ALL fields optional (partial updates)
+
+**CreateCarInquiryInput:**
+- `carId`* (UUID), `inquirerName`* (string), `inquirerEmail`* (valid email)
+- `inquirerPhone` (optional), `message`* (string)
+- `inquiryType`* — GENERAL | TEST_DRIVE | FINANCING | TRADE_IN | PRICE_NEGOTIATION | TECHNICAL_DETAILS | INSPECTION
+
+### Search/Filter Parameters
+
+**CarFilterInput (all optional):**
+- `make`, `model`, `vehicleType`, `condition`, `color`, `location`, `countryCode`
+- `minYear`/`maxYear`, `minPrice`/`maxPrice`, `minMileage`/`maxMileage`
+- `minEngineSize`/`maxEngineSize`, `minHorsePower`/`maxHorsePower`
+- `fuelType`, `transmission`, `drivetrain`
+- `doors`, `seats`, `maxPreviousOwners`
+- `nonSmokingVehicle`, `fullServiceHistory` (boolean filters)
+- `isFeatured`, `isCertified`, `allowTestDrive`, `acceptsTradeIn`, `priceNegotiable`, `quickSale`
+- `features` (array, max 50 — ALL must match)
+- `sellerType` — filters by USER (private) or DEALER
+
+**Default behavior:**
+- Sorted by `createdAt DESC` (newest first)
+- Only `isAvailable = true` listings shown
+- `quickSale = true` listings excluded unless explicitly filtered
+- Text filters are case-insensitive
+- Location uses partial matching
+
 ---
 
 ## 4. DATA MODELS
@@ -158,10 +210,16 @@ dealerServices: string[]
 ### CarImage
 ```
 id: UUID
-url: string          — Cloudinary URL
+url: string          — Cloudinary URL (primary display)
+thumbnailUrl?: string — Optional thumbnail URL
 publicId: string     — Cloudinary public_id
-isPrimary: boolean
-sortOrder: number
+isMain: boolean      — marks the primary listing image
+isInterior?: boolean — exterior vs interior photo
+sortOrder: number    — display order (ascending)
+width?: number       — image dimensions
+height?: number
+fileSize?: number    — bytes
+mimeType?: string
 carId: UUID (FK)
 ```
 
@@ -280,6 +338,14 @@ Images are stored on Cloudinary. The mobile app does NOT upload directly to Clou
 - Image folder: `carmarket365/`
 - Images are watermarked server-side on upload
 
+**Image constraints:**
+- Max 50 images per listing
+- Ordered by `sortOrder` ascending
+- `isMain: true` marks the primary/hero image
+- Web app uses 4:3 aspect ratio for car cards, 16:9 for detail gallery
+- Show image count badge when listing has multiple images
+- Show "New" badge on new condition cars, "Certified" badge on certified cars
+
 ---
 
 ## 8. AUTHENTICATION FLOW
@@ -295,7 +361,20 @@ Images are stored on Cloudinary. The mobile app does NOT upload directly to Clou
 8. If token expired/invalid, clear and show login
 ```
 
+**JWT details:**
+- Token expiry: **90 days**
+- Backend extracts from: httpOnly cookie (primary) OR Authorization Bearer header (fallback)
+- For the mobile app, use the **Authorization Bearer header** approach (no cookies needed)
+- Refresh endpoint exists: `POST /api/auth/refresh-token` (REST, not GraphQL)
+- Password reset tokens expire in 1 hour
+
 **Important:** Use `expo-secure-store` for tokens — it uses Keychain (iOS) and EncryptedSharedPreferences (Android). Never use AsyncStorage for auth tokens.
+
+**Password requirements (for registration & password change):**
+- 8-128 characters
+- Must contain at least 1 uppercase letter
+- Must contain at least 1 lowercase letter
+- Must contain at least 1 number
 
 ---
 
@@ -323,7 +402,94 @@ Tab Navigator (bottom tabs)
 
 ---
 
-## 10. BACKEND CHANGES NEEDED
+## 10. TRANSLATIONS / i18n
+
+The web app has a full translation system. The mobile app should replicate it.
+
+**Supported languages (in order of priority):**
+1. `mk` — Macedonian (default for North Macedonia)
+2. `en` — English
+3. `sq` — Albanian
+
+**Web translation files (source of truth):**
+- `/Users/stefankocevski/Documents/my-carmarket-frontend/flare-realm/shared/translations/en.ts`
+- `/Users/stefankocevski/Documents/my-carmarket-frontend/flare-realm/shared/translations/mk.ts`
+- `/Users/stefankocevski/Documents/my-carmarket-frontend/flare-realm/shared/translations/sq.ts`
+
+**Translation structure:** Nested keys like:
+```
+common.loading, common.error, common.save, common.cancel
+header.home, header.search, header.profile
+forms.validation.emailInvalid, forms.validation.passwordTooShort
+cars.make, cars.model, cars.year, cars.price, cars.mileage
+```
+
+**Implementation approach for mobile:**
+- Create `src/i18n/` folder with JSON translation files
+- Create `useTranslation()` hook (same API as web app)
+- Detect language from: user preference (stored) → device locale → default (mk)
+- Allow language change in Profile/Settings screen
+- Persist language preference to SecureStore and sync to backend (`languagePreference` field)
+
+---
+
+## 11. DISPLAY FORMATTING RULES
+
+**Price:** EUR currency, no decimals, German locale separators
+```
+€15.000  (not $15,000)
+Format: new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
+```
+
+**Mileage:** Thousands separator, "km" suffix
+```
+125.000 km
+Format: new Intl.NumberFormat('en-US').format(mileage) + ' km'
+```
+
+**Engine size:** CC converted to liters
+```
+1998cc → "2.0L"
+```
+
+**Date/time:** Relative format for recent, absolute for old
+```
+"Just now", "5m ago", "3h ago", "2d ago", then full date
+```
+
+---
+
+## 12. ERROR HANDLING
+
+**Error display patterns (match the website):**
+- **Toast/snackbar** for transient errors (network timeout, save failed) — auto-dismiss after 3-5 seconds
+- **Inline errors** for form validation (red text below the field)
+- **Full-screen error state** for fatal errors (no connection, server down) with retry button
+- **Empty states** with illustrations for "No results", "No saved cars", etc.
+
+**Apollo Client error handling:**
+- Network errors → show "Connection error" toast + retry option
+- GraphQL errors → parse error message, show user-friendly toast
+- Auth errors (401/UNAUTHENTICATED) → clear token, redirect to login
+- Rate limit errors (429) → show "Too many requests, please wait"
+
+---
+
+## 13. ADDITIONAL ENUMS (not in car entity but needed)
+
+**InquiryType** (for creating car inquiries):
+```
+GENERAL | TEST_DRIVE | FINANCING | TRADE_IN | PRICE_NEGOTIATION | TECHNICAL_DETAILS | INSPECTION
+```
+
+**InquiryStatus** (for displaying inquiry state):
+```
+PENDING | REPLIED | CLOSED | SPAM
+```
+
+---
+
+## 14. BACKEND CHANGES NEEDED
 
 Only **two** backend changes are needed (both in Phase 4):
 
@@ -340,7 +506,7 @@ Everything else (auth, cars CRUD, saved cars, images, search) already works.
 
 ---
 
-## 11. ENVIRONMENT VARIABLES
+## 15. ENVIRONMENT VARIABLES
 
 Create a `.env` file (gitignored) with:
 
@@ -353,7 +519,7 @@ No secrets are needed in the mobile app — all sensitive operations go through 
 
 ---
 
-## 12. DEVELOPMENT SETUP
+## 16. DEVELOPMENT SETUP
 
 ```bash
 # Clone the repo
@@ -378,7 +544,7 @@ npx expo start
 
 ---
 
-## 13. CODING CONVENTIONS
+## 17. CODING CONVENTIONS
 
 - **TypeScript strict mode** — no `any` types
 - **Functional components** only — no class components
@@ -394,7 +560,7 @@ npx expo start
 
 ---
 
-## 14. DESIGN GUIDELINES
+## 18. DESIGN GUIDELINES
 
 **The website (carmarket365.com) is the design reference. The mobile app must look the same as the website.** Every screen, component, and interaction should match the web app's design as closely as possible, adapted for native mobile patterns.
 
@@ -440,7 +606,7 @@ npx expo start
 
 ---
 
-## 15. INSTRUCTIONS FOR AI AGENTS
+## 19. INSTRUCTIONS FOR AI AGENTS
 
 When working on this project:
 

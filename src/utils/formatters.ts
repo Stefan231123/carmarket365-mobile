@@ -1,11 +1,15 @@
 // Formatting utilities for display
 
 /**
- * Format price with currency symbol
- * e.g., 15000 → "€15,000"
+ * Format price — matches website exactly (German locale, EUR, no decimals)
+ * e.g., 15000 → "€15.000"
  */
-export function formatPrice(price: number, currency = '€'): string {
-  return `${currency}${price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(price);
 }
 
 /**
@@ -13,7 +17,7 @@ export function formatPrice(price: number, currency = '€'): string {
  * e.g., 125000 → "125,000 km"
  */
 export function formatMileage(mileage: number): string {
-  return `${mileage.toLocaleString('en-US')} km`;
+  return `${new Intl.NumberFormat('en-US').format(mileage)} km`;
 }
 
 /**

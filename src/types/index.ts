@@ -8,6 +8,8 @@ import {
   DrivetrainType,
   UserRole,
   DealerStatus,
+  InquiryType,
+  InquiryStatus,
 } from '../constants/enums';
 
 export interface User {
@@ -52,9 +54,15 @@ export interface User {
 export interface CarImage {
   id: string;
   url: string;
+  thumbnailUrl?: string;
   publicId: string;
-  isPrimary: boolean;
+  isMain: boolean;
+  isInterior?: boolean;
   sortOrder: number;
+  width?: number;
+  height?: number;
+  fileSize?: number;
+  mimeType?: string;
 }
 
 export interface Car {
@@ -134,4 +142,54 @@ export interface PaginatedCars {
   cars: Car[];
   total: number;
   hasMore: boolean;
+}
+
+export interface CarInquiry {
+  id: string;
+  carId: string;
+  car?: Car;
+  inquirerName: string;
+  inquirerEmail: string;
+  inquirerPhone?: string;
+  inquiryType: InquiryType;
+  message: string;
+  status: InquiryStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CarFilter {
+  make?: string;
+  model?: string;
+  vehicleType?: VehicleType;
+  condition?: CarCondition;
+  color?: string;
+  location?: string;
+  countryCode?: string;
+  minYear?: number;
+  maxYear?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  minMileage?: number;
+  maxMileage?: number;
+  fuelType?: FuelType;
+  transmission?: TransmissionType;
+  drivetrain?: DrivetrainType;
+  minEngineSize?: number;
+  maxEngineSize?: number;
+  minHorsePower?: number;
+  maxHorsePower?: number;
+  doors?: number;
+  seats?: number;
+  maxPreviousOwners?: number;
+  nonSmokingVehicle?: boolean;
+  fullServiceHistory?: boolean;
+  isFeatured?: boolean;
+  isCertified?: boolean;
+  allowTestDrive?: boolean;
+  acceptsTradeIn?: boolean;
+  priceNegotiable?: boolean;
+  quickSale?: boolean;
+  features?: string[];
+  sellerType?: 'USER' | 'DEALER';
 }
