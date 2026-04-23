@@ -14,6 +14,16 @@ npx expo start --android # Start Android emulator
 npx eas build        # Build for production
 ```
 
+## Design Rule — CRITICAL
+
+**The website (carmarket365.com) is the design reference. The mobile app must look the same as the website.**
+
+Before building any screen:
+1. Visit `https://www.carmarket365.com` to see the live design
+2. Read the web source at `/Users/stefankocevski/Documents/my-carmarket-frontend/flare-realm/client/`
+3. Study the matching page in `client/pages/` and components in `client/components/`
+4. Replicate the same layout, colors, spacing, typography, and interactions in React Native
+
 ## Architecture Rules
 
 - **DO NOT** create a backend, API, or database — the backend exists at `carmarket365-backend.up.railway.app/graphql`

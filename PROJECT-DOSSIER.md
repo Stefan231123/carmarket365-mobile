@@ -23,6 +23,12 @@ Native mobile app for the CarMarket365 car marketplace. This app consumes the **
 - Both apps share the **same GraphQL backend** on Railway
 - GraphQL queries/mutations are functionally identical, just different client libraries (Apollo Client for both)
 - UI components are NOT shared (React DOM vs React Native) — screens must be rebuilt
+- **The web app is the design reference** — the mobile app must match the website's look and feel
+
+**Web app reference repo (design source of truth):**
+- Local path: `/Users/stefankocevski/Documents/my-carmarket-frontend/flare-realm/`
+- Frontend code: `flare-realm/client/` (React + Vite + shadcn/ui + Tailwind)
+- Live site: `https://www.carmarket365.com` — **always check this for current design**
 
 ---
 
@@ -390,12 +396,45 @@ npx expo start
 
 ## 14. DESIGN GUIDELINES
 
-- Match the web app's visual style (clean, modern, blue primary color)
-- Brand color: `#2563eb` (Blue-600)
-- Use native platform conventions (iOS: large titles, Android: material design)
-- Card-based layout for car listings
-- Bottom tab navigation (5 tabs)
-- Pull-to-refresh on all list screens
+**The website (carmarket365.com) is the design reference. The mobile app must look the same as the website.** Every screen, component, and interaction should match the web app's design as closely as possible, adapted for native mobile patterns.
+
+**How to reference the web design:**
+- Visit `https://www.carmarket365.com` to see the live design
+- Web frontend source: `/Users/stefankocevski/Documents/my-carmarket-frontend/flare-realm/client/`
+- Key web UI files to study:
+  - `client/pages/` — all page layouts and screen designs
+  - `client/components/` — reusable components (CarCard, filters, forms, etc.)
+  - `client/components/ui/` — shadcn/ui base components (buttons, inputs, cards, dialogs)
+  - `client/index.css` — Tailwind theme and global styles
+
+**Brand identity (must match exactly):**
+- Primary color: `#2563eb` (Blue-600)
+- Primary dark: `#1d4ed8` (Blue-700, for pressed states)
+- Background: `#ffffff` (white)
+- Surface/cards: `#f8fafc` (Slate-50)
+- Text: `#0f172a` (Slate-900)
+- Secondary text: `#64748b` (Slate-500)
+- Borders: `#e2e8f0` (Slate-200)
+- Error: `#ef4444` (Red-500)
+- Success: `#22c55e` (Green-500)
+- Rounded corners on cards and buttons (border-radius: 10-16px)
+
+**UI patterns to replicate from the website:**
+- Car cards: thumbnail image, price overlay or below, make/model/year, mileage, fuel type, location
+- Car detail page: full-width image gallery, specs grid, description, seller card, action buttons
+- Search filters: dropdown selects for make/model, range sliders for price/year, chip toggles for fuel/transmission
+- Login/Register: centered card form with email + password fields
+- Dashboard: list of user's cars with status badges and action buttons
+- Saved cars: same car card layout as search results
+- Profile: form fields for user info, toggle switches for preferences
+- Dealer badge/logo on dealer listings
+
+**Mobile adaptations (only where native patterns are better):**
+- Bottom tab bar instead of top nav menu
+- Pull-to-refresh instead of refresh button
+- Native share sheet instead of share dialog
+- Swipe gestures for image gallery
+- Native date/number pickers where appropriate
 - Skeleton loading states (not spinners)
 - Toast/snackbar for success/error feedback
 
@@ -407,11 +446,13 @@ When working on this project:
 
 1. **Read this dossier first** — it has everything you need
 2. **Check the Linear board** — issues CAR-60 to CAR-78 have detailed specs
-3. **Do NOT create a backend** — use the existing GraphQL API
-4. **Do NOT modify the backend** — except for Phase 4 push notification changes
-5. **Test with Expo Go** — run `npx expo start` and scan QR code
-6. **Follow the phase order** — Phase 1 must be complete before Phase 2
-7. **Keep types in sync** — if backend schema changes, update `src/types/index.ts`
-8. **Use expo-secure-store** for auth tokens, never AsyncStorage
-9. **GraphQL queries are already drafted** — in `src/graphql/`, convert to Apollo Client `gql` tag
-10. **Reuse components** — `CarCard` should be used in Home, Search, and Saved screens
+3. **Visit carmarket365.com FIRST** — the website is the design reference; every screen must match it
+4. **Read the web app source** — study `flare-realm/client/pages/` and `flare-realm/client/components/` to understand the exact layout, colors, spacing, and component structure before building the mobile equivalent
+5. **Do NOT create a backend** — use the existing GraphQL API
+6. **Do NOT modify the backend** — except for Phase 4 push notification changes
+7. **Test with Expo Go** — run `npx expo start` and scan QR code
+8. **Follow the phase order** — Phase 1 must be complete before Phase 2
+9. **Keep types in sync** — if backend schema changes, update `src/types/index.ts`
+10. **Use expo-secure-store** for auth tokens, never AsyncStorage
+11. **GraphQL queries are already drafted** — in `src/graphql/`, convert to Apollo Client `gql` tag
+12. **Reuse components** — `CarCard` should be used in Home, Search, and Saved screens
