@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import * as SecureStore from 'expo-secure-store';
 import { gql } from '@apollo/client';
 import { useMutation, useApolloClient } from '@apollo/client/react';
+import { setAuthErrorHandler } from '../graphql/client';
 import { User } from '../types';
 
 interface AuthContextType {
@@ -9,7 +10,10 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName?: string, lastName?: string) => Promise<void>;
+  register: (email: string, password: string, name?: string, dealerInfo?: { dealerName: string; dealerAddress?: string; dealerCity?: string; dealerPhoneNumber?: string }) => Promise<void>;
+  socialLogin: (provider: string, token: string, email: string, name?: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -20,59 +24,104 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => {},
   register: async () => {},
+  socialLogin: async () => {},
+  forgotPassword: async () => {},
+  deleteAccount: async () => {},
   logout: async () => {},
   refreshUser: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
+const USER_FIELDS = `
+  id
+  email
+  firstName
+  lastName
+  name
+  phone
+  role
+  avatarUrl
+  isEmailVerified
+  languagePreference
+  marketingEmailsEnabled
+  smsNotificationsEnabled
+  dealerName
+  dealerStatus
+  dealerLogoUrl
+  dealerDescription
+  dealerAddress
+  dealerCity
+  dealerRegion
+  dealerCountry
+  dealerPhoneNumber
+  dealerWebsite
+  dealerWorkingHours
+  dealerServices
+  createdAt
+`;
+
 const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $password: String!) {
-    login(loginInput: { email: $email, password: $password }) {
+    login(input: { email: $email, password: $password }) {
       accessToken
-      user {
-        id
-        email
-        firstName
-        lastName
-        name
-        role
-        avatarUrl
-        isEmailVerified
-        languagePreference
-        dealerName
-        dealerStatus
-        dealerLogoUrl
-      }
+      refreshToken
+      user { ${USER_FIELDS} }
     }
   }
 `;
 
 const REGISTER_MUTATION = gql`
-  mutation Register($email: String!, $password: String!, $firstName: String, $lastName: String) {
-    register(registerInput: {
-      email: $email
-      password: $password
-      firstName: $firstName
-      lastName: $lastName
-    }) {
+  mutation Register($email: String!, $password: String!, $name: String, $dealerName: String, $dealerAddress: String, $dealerCity: String, $dealerPhoneNumber: String) {
+    register(input: { email: $email, password: $password, name: $name, dealerName: $dealerName, dealerAddress: $dealerAddress, dealerCity: $dealerCity, dealerPhoneNumber: $dealerPhoneNumber }) {
       accessToken
-      user {
-        id
-        email
-        firstName
-        lastName
-        name
-        role
-        avatarUrl
-      }
+      refreshToken
+      user { ${USER_FIELDS} }
+    }
+  }
+`;
+
+const SOCIAL_LOGIN_MUTATION = gql`
+  mutation SocialLogin($provider: String!, $token: String!, $email: String!, $name: String) {
+    socialLogin(provider: $provider, token: $token, email: $email, name: $name) {
+      accessToken
+      refreshToken
+      user { ${USER_FIELDS} }
+    }
+  }
+`;
+
+const FORGOT_PASSWORD_MUTATION = gql`
+  mutation RequestPasswordReset($email: String!) {
+    requestPasswordReset(email: $email)
+  }
+`;
+
+const DELETE_ACCOUNT_MUTATION = gql`
+  mutation DeleteMyAccount {
+    deleteMyAccount
+  }
+`;
+
+const LOGOUT_MUTATION = gql`
+  mutation Logout {
+    logout
+  }
+`;
+
+const REFRESH_TOKEN_MUTATION = gql`
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+      accessToken
+      refreshToken
+      user { ${USER_FIELDS} }
     }
   }
 `;
 
 const ME_QUERY = gql`
-  query GetMe {
-    me {
+  query GetCurrentUser {
+    getCurrentUser {
       id
       email
       firstName
@@ -90,6 +139,15 @@ const ME_QUERY = gql`
       dealerName
       dealerStatus
       dealerLogoUrl
+      dealerDescription
+      dealerAddress
+      dealerCity
+      dealerRegion
+      dealerCountry
+      dealerPhoneNumber
+      dealerWebsite
+      dealerWorkingHours
+      dealerServices
       createdAt
     }
   }
@@ -102,6 +160,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [loginMutation] = useMutation(LOGIN_MUTATION);
   const [registerMutation] = useMutation(REGISTER_MUTATION);
+  const [socialLoginMutation] = useMutation(SOCIAL_LOGIN_MUTATION);
+  const [forgotPasswordMutation] = useMutation(FORGOT_PASSWORD_MUTATION);
+  const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT_MUTATION);
+  const [logoutMutation] = useMutation(LOGOUT_MUTATION);
 
   const refreshUser = useCallback(async () => {
     try {
@@ -117,15 +179,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fetchPolicy: 'network-only',
       });
 
-      if ((data as any)?.me) {
-        setUser((data as any).me);
+      if ((data as any)?.getCurrentUser) {
+        setUser((data as any).getCurrentUser);
       } else {
         await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
+        await SecureStore.deleteItemAsync('userId');
         setUser(null);
       }
-    } catch {
-      await SecureStore.deleteItemAsync('accessToken');
-      setUser(null);
+    } catch (err: any) {
+      // Only clear tokens on auth errors — keep session alive through network failures
+      const isAuthError = err?.graphQLErrors?.some(
+        (e: any) => e.extensions?.code === 'UNAUTHENTICATED' || e.extensions?.code === 'FORBIDDEN',
+      );
+      if (isAuthError) {
+        await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
+        await SecureStore.deleteItemAsync('userId');
+        setUser(null);
+      }
+      // On network errors, keep existing user state (stale but better than forced logout)
     } finally {
       setIsLoading(false);
     }
@@ -135,38 +208,99 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUser();
   }, [refreshUser]);
 
+  // Auto-logout when backend returns UNAUTHENTICATED
+  useEffect(() => {
+    setAuthErrorHandler(() => {
+      setUser(null);
+      client.clearStore();
+    });
+  }, [client]);
+
   const login = useCallback(async (email: string, password: string) => {
     const { data } = await loginMutation({
       variables: { email, password },
     });
 
-    if ((data as any)?.login) {
-      await SecureStore.setItemAsync('accessToken', (data as any).login.accessToken);
-      setUser((data as any).login.user);
+    const result = (data as any)?.login;
+    if (result) {
+      await SecureStore.setItemAsync('accessToken', result.accessToken);
+      if (result.refreshToken) await SecureStore.setItemAsync('refreshToken', result.refreshToken);
+      if (result.user?.id) await SecureStore.setItemAsync('userId', result.user.id);
+      setUser(result.user);
     }
   }, [loginMutation]);
 
   const register = useCallback(async (
     email: string,
     password: string,
-    firstName?: string,
-    lastName?: string,
+    name?: string,
+    dealerInfo?: { dealerName: string; dealerAddress?: string; dealerCity?: string; dealerPhoneNumber?: string },
   ) => {
     const { data } = await registerMutation({
-      variables: { email, password, firstName, lastName },
+      variables: {
+        email,
+        password,
+        name: name || undefined,
+        dealerName: dealerInfo?.dealerName || undefined,
+        dealerAddress: dealerInfo?.dealerAddress || undefined,
+        dealerCity: dealerInfo?.dealerCity || undefined,
+        dealerPhoneNumber: dealerInfo?.dealerPhoneNumber || undefined,
+      },
     });
 
-    if ((data as any)?.register) {
-      await SecureStore.setItemAsync('accessToken', (data as any).register.accessToken);
-      setUser((data as any).register.user);
+    const result = (data as any)?.register;
+    if (result) {
+      await SecureStore.setItemAsync('accessToken', result.accessToken);
+      if (result.refreshToken) await SecureStore.setItemAsync('refreshToken', result.refreshToken);
+      if (result.user?.id) await SecureStore.setItemAsync('userId', result.user.id);
+      setUser(result.user);
     }
   }, [registerMutation]);
 
-  const logout = useCallback(async () => {
-    await SecureStore.deleteItemAsync('accessToken');
+  const socialLoginFn = useCallback(async (
+    provider: string,
+    token: string,
+    email: string,
+    name?: string,
+  ) => {
+    const { data } = await socialLoginMutation({
+      variables: { provider, token, email, name: name || undefined },
+    });
+
+    const result = (data as any)?.socialLogin;
+    if (result) {
+      await SecureStore.setItemAsync('accessToken', result.accessToken);
+      if (result.refreshToken) await SecureStore.setItemAsync('refreshToken', result.refreshToken);
+      if (result.user?.id) await SecureStore.setItemAsync('userId', result.user.id);
+      setUser(result.user);
+    }
+  }, [socialLoginMutation]);
+
+  const forgotPasswordFn = useCallback(async (email: string) => {
+    await forgotPasswordMutation({ variables: { email } });
+  }, [forgotPasswordMutation]);
+
+  const deleteAccountFn = useCallback(async () => {
+    await deleteAccountMutation();
+    await Promise.all([
+      SecureStore.deleteItemAsync('accessToken'),
+      SecureStore.deleteItemAsync('refreshToken'),
+      SecureStore.deleteItemAsync('userId'),
+    ]);
     await client.clearStore();
     setUser(null);
-  }, [client]);
+  }, [deleteAccountMutation, client]);
+
+  const logout = useCallback(async () => {
+    try { await logoutMutation(); } catch { /* clear locally regardless */ }
+    await Promise.all([
+      SecureStore.deleteItemAsync('accessToken'),
+      SecureStore.deleteItemAsync('refreshToken'),
+      SecureStore.deleteItemAsync('userId'),
+    ]);
+    await client.clearStore();
+    setUser(null);
+  }, [client, logoutMutation]);
 
   return (
     <AuthContext.Provider
@@ -176,6 +310,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         register,
+        socialLogin: socialLoginFn,
+        forgotPassword: forgotPasswordFn,
+        deleteAccount: deleteAccountFn,
         logout,
         refreshUser,
       }}

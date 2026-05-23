@@ -1,0 +1,145 @@
+// Municipality and city data for supported countries
+
+export interface LocationOption {
+  value: string;
+  label: string;
+}
+
+// All 80 municipalities of North Macedonia + City of Skopje
+export const MUNICIPALITIES_MK: LocationOption[] = [
+  { value: 'Aerodrom', label: 'Aerodrom' },
+  { value: 'Arachinovo', label: 'Arachinovo' },
+  { value: 'Berovo', label: 'Berovo' },
+  { value: 'Bitola', label: 'Bitola' },
+  { value: 'Bogdanci', label: 'Bogdanci' },
+  { value: 'Bogovinje', label: 'Bogovinje' },
+  { value: 'Bosilovo', label: 'Bosilovo' },
+  { value: 'Brvenica', label: 'Brvenica' },
+  { value: 'Butel', label: 'Butel' },
+  { value: 'Valandovo', label: 'Valandovo' },
+  { value: 'Vasilevo', label: 'Vasilevo' },
+  { value: 'Veles', label: 'Veles' },
+  { value: 'Vevchani', label: 'Vevchani' },
+  { value: 'Vinica', label: 'Vinica' },
+  { value: 'Vranestica', label: 'Vranestica' },
+  { value: 'Vrapchishte', label: 'Vrapchishte' },
+  { value: 'Gazi Baba', label: 'Gazi Baba' },
+  { value: 'Gevgelija', label: 'Gevgelija' },
+  { value: 'Gostivar', label: 'Gostivar' },
+  { value: 'Gradsko', label: 'Gradsko' },
+  { value: 'Debar', label: 'Debar' },
+  { value: 'Debarca', label: 'Debarca' },
+  { value: 'Delchevo', label: 'Delchevo' },
+  { value: 'Demir Hisar', label: 'Demir Hisar' },
+  { value: 'Demir Kapija', label: 'Demir Kapija' },
+  { value: 'Dojran', label: 'Dojran' },
+  { value: 'Dolneni', label: 'Dolneni' },
+  { value: 'Drugovo', label: 'Drugovo' },
+  { value: 'Zhelino', label: 'Zhelino' },
+  { value: 'Zajas', label: 'Zajas' },
+  { value: 'Zelenikovo', label: 'Zelenikovo' },
+  { value: 'Zrnovci', label: 'Zrnovci' },
+  { value: 'Ilinden', label: 'Ilinden' },
+  { value: 'Jegunovce', label: 'Jegunovce' },
+  { value: 'Karbinci', label: 'Karbinci' },
+  { value: 'Karpos', label: 'Karpos' },
+  { value: 'Kavadarci', label: 'Kavadarci' },
+  { value: 'Kisela Voda', label: 'Kisela Voda' },
+  { value: 'Kichevo', label: 'Kichevo' },
+  { value: 'Konche', label: 'Konche' },
+  { value: 'Kochani', label: 'Kochani' },
+  { value: 'Kratovo', label: 'Kratovo' },
+  { value: 'Kriva Palanka', label: 'Kriva Palanka' },
+  { value: 'Krivogashtani', label: 'Krivogashtani' },
+  { value: 'Krushevo', label: 'Krushevo' },
+  { value: 'Kumanovo', label: 'Kumanovo' },
+  { value: 'Lipkovo', label: 'Lipkovo' },
+  { value: 'Lozovo', label: 'Lozovo' },
+  { value: 'Mavrovo i Rostusha', label: 'Mavrovo i Rostusha' },
+  { value: 'Makedonska Kamenica', label: 'Makedonska Kamenica' },
+  { value: 'Makedonski Brod', label: 'Makedonski Brod' },
+  { value: 'Mogila', label: 'Mogila' },
+  { value: 'Negotino', label: 'Negotino' },
+  { value: 'Novaci', label: 'Novaci' },
+  { value: 'Novo Selo', label: 'Novo Selo' },
+  { value: 'Ohrid', label: 'Ohrid' },
+  { value: 'Oslomej', label: 'Oslomej' },
+  { value: 'Pehchevo', label: 'Pehchevo' },
+  { value: 'Petrovec', label: 'Petrovec' },
+  { value: 'Plasnica', label: 'Plasnica' },
+  { value: 'Prilep', label: 'Prilep' },
+  { value: 'Probistip', label: 'Probistip' },
+  { value: 'Radovish', label: 'Radovish' },
+  { value: 'Rankovce', label: 'Rankovce' },
+  { value: 'Resen', label: 'Resen' },
+  { value: 'Rosoman', label: 'Rosoman' },
+  { value: 'Saraj', label: 'Saraj' },
+  { value: 'Sveti Nikole', label: 'Sveti Nikole' },
+  { value: 'Sopishte', label: 'Sopishte' },
+  { value: 'Staro Nagorichane', label: 'Staro Nagorichane' },
+  { value: 'Struga', label: 'Struga' },
+  { value: 'Strumica', label: 'Strumica' },
+  { value: 'Studenichani', label: 'Studenichani' },
+  { value: 'Tearce', label: 'Tearce' },
+  { value: 'Tetovo', label: 'Tetovo' },
+  { value: 'Centar', label: 'Centar' },
+  { value: 'Centar Zhupa', label: 'Centar Zhupa' },
+  { value: 'Chair', label: 'Chair' },
+  { value: 'Chashka', label: 'Chashka' },
+  { value: 'Cheshinovo-Obleshevo', label: 'Cheshinovo-Obleshevo' },
+  { value: 'Chucher-Sandevo', label: 'Chucher-Sandevo' },
+  { value: 'Shtip', label: 'Shtip' },
+  { value: 'Shuto Orizari', label: 'Shuto Orizari' },
+  { value: 'City of Skopje', label: 'City of Skopje' },
+];
+
+// Major cities in Albania
+export const CITIES_AL: LocationOption[] = [
+  { value: 'Tirana', label: 'Tirana' },
+  { value: 'Durres', label: 'Durres' },
+  { value: 'Vlore', label: 'Vlore' },
+  { value: 'Elbasan', label: 'Elbasan' },
+  { value: 'Shkoder', label: 'Shkoder' },
+  { value: 'Fier', label: 'Fier' },
+  { value: 'Korce', label: 'Korce' },
+  { value: 'Berat', label: 'Berat' },
+  { value: 'Lushnje', label: 'Lushnje' },
+  { value: 'Pogradec', label: 'Pogradec' },
+  { value: 'Kavaje', label: 'Kavaje' },
+  { value: 'Gjirokaster', label: 'Gjirokaster' },
+  { value: 'Sarande', label: 'Sarande' },
+  { value: 'Kukes', label: 'Kukes' },
+  { value: 'Lezhe', label: 'Lezhe' },
+  { value: 'Peshkopi', label: 'Peshkopi' },
+  { value: 'Permet', label: 'Permet' },
+  { value: 'Burrel', label: 'Burrel' },
+];
+
+// Major cities in Kosovo
+export const CITIES_XK: LocationOption[] = [
+  { value: 'Prishtina', label: 'Prishtina' },
+  { value: 'Prizren', label: 'Prizren' },
+  { value: 'Ferizaj', label: 'Ferizaj' },
+  { value: 'Peja', label: 'Peja' },
+  { value: 'Gjakova', label: 'Gjakova' },
+  { value: 'Gjilan', label: 'Gjilan' },
+  { value: 'Mitrovica', label: 'Mitrovica' },
+  { value: 'Podujeva', label: 'Podujeva' },
+  { value: 'Vushtrri', label: 'Vushtrri' },
+  { value: 'Suhareka', label: 'Suhareka' },
+  { value: 'Rahovec', label: 'Rahovec' },
+  { value: 'Drenas', label: 'Drenas' },
+  { value: 'Lipjan', label: 'Lipjan' },
+  { value: 'Kacanik', label: 'Kacanik' },
+  { value: 'Skenderaj', label: 'Skenderaj' },
+];
+
+// Get locations for a specific country code
+export function getLocationsForCountry(countryCode: string): LocationOption[] {
+  switch (countryCode) {
+    case 'mk': return MUNICIPALITIES_MK;
+    case 'al': return CITIES_AL;
+    case 'xk': return CITIES_XK;
+    default: return MUNICIPALITIES_MK; // Default to MK
+  }
+}
