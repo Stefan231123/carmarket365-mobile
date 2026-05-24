@@ -10,7 +10,7 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/t
 import { CarCard } from '../../src/components/CarCard';
 import { useSavedCarIds, useToggleSave } from '../../src/hooks/useSaveCar';
 import { useLanguage } from '../../src/context/LanguageContext';
-import { CAR_MAKES, CAR_MODELS_BY_MAKE } from '../../src/constants/car-data';
+import { CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES } from '../../src/constants/car-data';
 import { MUNICIPALITIES_MK } from '../../src/constants/locations';
 
 // ── Data ──────────────────────────────────────────────────────────
@@ -136,6 +136,7 @@ export default function HomeScreen() {
     options: { label: string; value: string }[];
     selected: string;
     onSelect: (value: string) => void;
+    separatorAfter?: number;
   }>({ visible: false, title: '', options: [], selected: '', onSelect: () => {} });
 
   const onRefresh = async () => {
@@ -149,8 +150,9 @@ export default function HomeScreen() {
     options: { label: string; value: string }[],
     selected: string,
     onSelect: (value: string) => void,
+    separatorAfter?: number,
   ) => {
-    setPickerModal({ visible: true, title, options, selected, onSelect });
+    setPickerModal({ visible: true, title, options, selected, onSelect, separatorAfter });
   };
 
   const handleMakeChange = (value: string) => {
@@ -261,7 +263,7 @@ export default function HomeScreen() {
                 <Text style={styles.fieldLabel}>{t.home.make}</Text>
                 <Pressable
                   style={styles.selectInput}
-                  onPress={() => openPicker(t.home.make, makeOptions, make, handleMakeChange)}
+                  onPress={() => openPicker(t.home.make, makeOptions, make, handleMakeChange, POPULAR_MAKE_NAMES.length)}
                 >
                   <Text style={[styles.selectText, !make && styles.selectPlaceholder]} numberOfLines={1}>
                     {make || t.home.anyMake}
@@ -513,23 +515,27 @@ export default function HomeScreen() {
                 {!pickerModal.selected && <Ionicons name="checkmark" size={18} color={COLORS.primary} />}
               </Pressable>
 
-              {pickerModal.options.map((opt) => (
-                <Pressable
-                  key={opt.value}
-                  style={[styles.modalOption, pickerModal.selected === opt.value && styles.modalOptionSelected]}
-                  onPress={() => {
-                    pickerModal.onSelect(opt.value);
-                    setPickerModal(p => ({ ...p, visible: false }));
-                  }}
-                >
-                  <Text
-                    style={[styles.modalOptionText, pickerModal.selected === opt.value && styles.modalOptionTextSelected]}
-                    numberOfLines={1}
+              {pickerModal.options.map((opt, idx) => (
+                <React.Fragment key={opt.value}>
+                  {pickerModal.separatorAfter != null && idx === pickerModal.separatorAfter && (
+                    <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 8 }} />
+                  )}
+                  <Pressable
+                    style={[styles.modalOption, pickerModal.selected === opt.value && styles.modalOptionSelected]}
+                    onPress={() => {
+                      pickerModal.onSelect(opt.value);
+                      setPickerModal(p => ({ ...p, visible: false }));
+                    }}
                   >
-                    {opt.label}
-                  </Text>
-                  {pickerModal.selected === opt.value && <Ionicons name="checkmark" size={18} color={COLORS.primary} />}
-                </Pressable>
+                    <Text
+                      style={[styles.modalOptionText, pickerModal.selected === opt.value && styles.modalOptionTextSelected]}
+                      numberOfLines={1}
+                    >
+                      {opt.label}
+                    </Text>
+                    {pickerModal.selected === opt.value && <Ionicons name="checkmark" size={18} color={COLORS.primary} />}
+                  </Pressable>
+                </React.Fragment>
               ))}
             </ScrollView>
           </Pressable>

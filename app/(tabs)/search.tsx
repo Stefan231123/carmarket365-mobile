@@ -11,7 +11,7 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/t
 import { formatEnum, translateEnum } from '../../src/utils/formatters';
 import { CarCard } from '../../src/components/CarCard';
 import { CarFilter } from '../../src/types';
-import { CAR_MAKES, CAR_MODELS_BY_MAKE } from '../../src/constants/car-data';
+import { CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES } from '../../src/constants/car-data';
 import { MUNICIPALITIES_MK } from '../../src/constants/locations';
 import { FuelType, TransmissionType, CarCondition, VehicleType, DrivetrainType } from '../../src/constants/enums';
 import { useSavedCarIds, useToggleSave } from '../../src/hooks/useSaveCar';
@@ -945,16 +945,21 @@ export default function SearchScreen() {
           <FlatList
             data={getPickerOptions()}
             keyExtractor={(item) => item.value}
-            renderItem={({ item }) => {
+            renderItem={({ item, index }) => {
               const currentVal = pickerField === 'sortBy'
                 ? `${draftSortBy}|${draftSortOrder}`
                 : String(draftFilters[pickerField as keyof CarFilter] ?? '');
               const isSelected = currentVal === item.value;
               return (
-                <Pressable style={styles.pickerItem} onPress={() => handlePickerSelect(item.value)}>
-                  <Text style={[styles.pickerItemText, isSelected && styles.pickerItemSelected]}>{item.label}</Text>
-                  {isSelected && <Ionicons name="checkmark" size={20} color={COLORS.primary} />}
-                </Pressable>
+                <>
+                  {pickerField === 'make' && index === POPULAR_MAKE_NAMES.length && (
+                    <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 8 }} />
+                  )}
+                  <Pressable style={styles.pickerItem} onPress={() => handlePickerSelect(item.value)}>
+                    <Text style={[styles.pickerItemText, isSelected && styles.pickerItemSelected]}>{item.label}</Text>
+                    {isSelected && <Ionicons name="checkmark" size={20} color={COLORS.primary} />}
+                  </Pressable>
+                </>
               );
             }}
           />

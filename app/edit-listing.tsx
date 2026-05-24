@@ -12,7 +12,7 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../src/constants/them
 import { formatEnum, translateEnum } from '../src/utils/formatters';
 import { uploadImageToS3 } from '../src/utils/s3-upload';
 import { useLanguage } from '../src/context/LanguageContext';
-import { CAR_MAKES, COMMON_FEATURES, COMMON_SAFETY } from '../src/constants/car-data';
+import { CAR_MAKES, POPULAR_MAKE_NAMES, COMMON_FEATURES, COMMON_SAFETY } from '../src/constants/car-data';
 import { VehicleType, FuelType, TransmissionType, CarCondition, DrivetrainType } from '../src/constants/enums';
 
 const GET_CAR = gql`
@@ -520,25 +520,29 @@ export default function EditListingScreen() {
               </Pressable>
             </View>
             <ScrollView style={styles.pickerList}>
-              {getPickerOptions().map((opt) => (
-                <Pressable
-                  key={opt.value}
-                  style={styles.pickerItem}
-                  onPress={() => {
-                    updateForm(pickerField as keyof EditFormData, opt.value);
-                    setPickerVisible(false);
-                  }}
-                >
-                  <Text style={[
-                    styles.pickerItemText,
-                    form[pickerField as keyof EditFormData] === opt.value && styles.pickerItemSelected,
-                  ]}>
-                    {opt.label}
-                  </Text>
-                  {form[pickerField as keyof EditFormData] === opt.value && (
-                    <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+              {getPickerOptions().map((opt, idx) => (
+                <React.Fragment key={opt.value}>
+                  {pickerField === 'make' && idx === POPULAR_MAKE_NAMES.length && (
+                    <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 8 }} />
                   )}
-                </Pressable>
+                  <Pressable
+                    style={styles.pickerItem}
+                    onPress={() => {
+                      updateForm(pickerField as keyof EditFormData, opt.value);
+                      setPickerVisible(false);
+                    }}
+                  >
+                    <Text style={[
+                      styles.pickerItemText,
+                      form[pickerField as keyof EditFormData] === opt.value && styles.pickerItemSelected,
+                    ]}>
+                      {opt.label}
+                    </Text>
+                    {form[pickerField as keyof EditFormData] === opt.value && (
+                      <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+                    )}
+                  </Pressable>
+                </React.Fragment>
               ))}
             </ScrollView>
           </View>
