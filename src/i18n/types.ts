@@ -283,6 +283,7 @@ export interface MobileTranslations {
     phonePlaceholder: string;
     emailContactPlaceholder: string;
     imageUploadFailed: string;
+    atLeastOneImage: string;
   };
 
   profile: {

@@ -162,6 +162,7 @@ export default function PostCarScreen() {
     }
     if (step === 3) {
       if (!form.location.trim()) { Alert.alert(t.common.required, t.post.enterLocationAlert); return false; }
+      if (images.length === 0) { Alert.alert(t.common.required, t.post.atLeastOneImage); return false; }
     }
     return true;
   };

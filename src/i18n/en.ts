@@ -279,6 +279,7 @@ export const en: MobileTranslations = {
     phonePlaceholder: '+389 7X XXX XXX',
     emailContactPlaceholder: 'your@email.com',
     imageUploadFailed: '{count} of {total} images failed to upload. You can add them later from the edit screen.',
+    atLeastOneImage: 'Please add at least one photo of the vehicle.',
   },
 
   profile: {

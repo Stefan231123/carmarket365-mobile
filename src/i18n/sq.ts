@@ -279,6 +279,7 @@ export const sq: MobileTranslations = {
     phonePlaceholder: '+389 7X XXX XXX',
     emailContactPlaceholder: 'juaji@email.com',
     imageUploadFailed: '{count} nga {total} imazhe nuk u ngarkuan. Mund t\'i shtoni më vonë nga ekrani i redaktimit.',
+    atLeastOneImage: 'Shtoni të paktën një foto të automjetit.',
   },
 
   profile: {

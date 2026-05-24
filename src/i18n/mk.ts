@@ -279,6 +279,7 @@ export const mk: MobileTranslations = {
     phonePlaceholder: '+389 7X XXX XXX',
     emailContactPlaceholder: 'вашиот@email.com',
     imageUploadFailed: '{count} од {total} слики не се прикачија. Можете да ги додадете подоцна од екранот за уредување.',
+    atLeastOneImage: 'Додадете барем една фотографија од возилото.',
   },
 
   profile: {
