@@ -1454,3 +1454,86 @@ export const MOTORCYCLE_BODY_TYPES: string[] = [
   'Trial',
   'Rally',
 ];
+
+// ─── TRUCK / COMMERCIAL VEHICLE DATA ────────────────────────────────────────
+
+export interface TruckMakeData {
+  name: string;
+  country: string;
+  models: string[];
+}
+
+export const TRUCK_DATA: TruckMakeData[] = [
+  { name: 'Citroën', country: 'FR', models: ['Berlingo Van', 'Jumper', 'Jumpy', 'ë-Berlingo Van', 'ë-Jumper', 'ë-Jumpy'] },
+  { name: 'DAF', country: 'NL', models: ['CF', 'LF', 'XD', 'XF', 'XG', 'XG+'] },
+  { name: 'Dodge', country: 'US', models: ['RAM 1500', 'RAM 2500', 'RAM 3500', 'RAM ProMaster'] },
+  { name: 'Fiat', country: 'IT', models: ['Doblò Cargo', 'Ducato', 'Fiorino', 'Fullback', 'Scudo', 'E-Ducato', 'E-Scudo'] },
+  { name: 'Ford', country: 'US', models: ['E-Transit', 'F-150', 'F-250', 'F-350', 'Ranger', 'Transit', 'Transit Connect', 'Transit Courier', 'Transit Custom'] },
+  { name: 'GAZ', country: 'RU', models: ['Gazelle', 'Gazelle Next', 'Gazon Next', 'Sadko Next', 'Valdai'] },
+  { name: 'Hino', country: 'JP', models: ['195', '268', '338', '500', '700'] },
+  { name: 'Hyundai', country: 'KR', models: ['H-1', 'H-100', 'H-350', 'Mighty', 'Porter', 'Staria Load'] },
+  { name: 'Isuzu', country: 'JP', models: ['D-Max', 'ELF', 'Forward', 'Giga', 'N-Series', 'NLR', 'NMR', 'NPR', 'NQR'] },
+  { name: 'Iveco', country: 'IT', models: ['Daily', 'Eurocargo', 'eDaily', 'S-Way', 'T-Way', 'X-Way'] },
+  { name: 'JAC', country: 'CN', models: ['N56', 'N80', 'N120', 'Sunray', 'T6', 'T8', 'X200'] },
+  { name: 'Kamaz', country: 'RU', models: ['4308', '5490', '54901', '6520', '65207'] },
+  { name: 'Kia', country: 'KR', models: ['Bongo', 'K2500', 'K2700'] },
+  { name: 'MAN', country: 'DE', models: ['TGE', 'TGL', 'TGM', 'TGS', 'TGX', 'eTGE', 'eTGM'] },
+  { name: 'Maxus', country: 'CN', models: ['Deliver 3', 'Deliver 7', 'Deliver 9', 'e Deliver 3', 'e Deliver 7', 'e Deliver 9', 'eT90', 'T60', 'T90'] },
+  { name: 'Mercedes-Benz', country: 'DE', models: ['Actros', 'Antos', 'Arocs', 'Atego', 'Citan', 'eActros', 'eCitan', 'eSprinter', 'eVito', 'Sprinter', 'Unimog', 'Vito', 'X-Class'] },
+  { name: 'Mitsubishi', country: 'JP', models: ['Canter', 'Fuso', 'L200', 'L300', 'Triton'] },
+  { name: 'Nissan', country: 'JP', models: ['Atleon', 'Cabstar', 'Interstar', 'Navara', 'NV200', 'NV250', 'NV300', 'NV400', 'NT400', 'Primastar', 'Townstar Van'] },
+  { name: 'Opel', country: 'DE', models: ['Combo Cargo', 'Movano', 'Vivaro', 'Vivaro-e'] },
+  { name: 'Peugeot', country: 'FR', models: ['Boxer', 'e-Boxer', 'e-Expert', 'e-Partner', 'Expert', 'Landtrek', 'Partner Van'] },
+  { name: 'Piaggio', country: 'IT', models: ['Ape', 'Porter'] },
+  { name: 'Renault', country: 'FR', models: ['D', 'D Wide', 'Express Van', 'Kangoo Van', 'Master', 'Master E-Tech', 'T', 'Trafic', 'Trafic E-Tech'] },
+  { name: 'Scania', country: 'SE', models: ['G-series', 'L-series', 'P-series', 'R-series', 'S-series'] },
+  { name: 'SsangYong', country: 'KR', models: ['Musso', 'Musso Grand', 'Rexton Sports'] },
+  { name: 'Toyota', country: 'JP', models: ['Dyna', 'Hilux', 'Land Cruiser Pickup', 'ProAce', 'ProAce City', 'ProAce Electric'] },
+  { name: 'Volkswagen', country: 'DE', models: ['Amarok', 'Caddy Cargo', 'Crafter', 'e-Crafter', 'ID. Buzz Cargo', 'Transporter'] },
+  { name: 'Volvo', country: 'SE', models: ['FE', 'FH', 'FH16', 'FL', 'FM', 'FMX'] },
+];
+
+/** All truck make names sorted alphabetically */
+export const TRUCK_MAKES: string[] = TRUCK_DATA.map((m) => m.name).sort();
+
+/** Most frequent truck brands — shown first in dropdowns */
+export const POPULAR_TRUCK_MAKES: string[] = [
+  'Mercedes-Benz', 'Volkswagen', 'Ford', 'Iveco', 'MAN',
+  'Renault', 'Fiat', 'Peugeot', 'Toyota', 'Scania',
+];
+
+/** Truck makes ordered with popular brands first, then rest alphabetically */
+export const TRUCK_MAKES_SORTED: string[] = [
+  ...POPULAR_TRUCK_MAKES,
+  ...TRUCK_MAKES.filter((m) => !POPULAR_TRUCK_MAKES.includes(m)),
+];
+
+/** Truck make → models lookup */
+export const TRUCK_MODELS_BY_MAKE: Record<string, string[]> = Object.fromEntries(
+  TRUCK_DATA.map((m) => [m.name, m.models]),
+);
+
+/** Get models for a given truck make */
+export function getTruckModelsForMake(make: string): string[] {
+  return TRUCK_MODELS_BY_MAKE[make] ?? [];
+}
+
+/** Truck / commercial vehicle body types */
+export const TRUCK_BODY_TYPES: string[] = [
+  'Panel Van',
+  'Box Van',
+  'Pickup',
+  'Flatbed',
+  'Chassis Cab',
+  'Tipper',
+  'Refrigerated',
+  'Curtainsider',
+  'Dropside',
+  'Luton Van',
+  'Minibus',
+  'Car Transporter',
+  'Tanker',
+  'Tractor Unit',
+  'Crew Cab',
+  'Platform',
+];

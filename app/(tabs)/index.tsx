@@ -13,6 +13,7 @@ import { useLanguage } from '../../src/context/LanguageContext';
 import {
   CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES,
   MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES, getMotorcycleModelsForMake,
+  TRUCK_MAKES_SORTED, POPULAR_TRUCK_MAKES, getTruckModelsForMake,
 } from '../../src/constants/car-data';
 import { MUNICIPALITIES_MK } from '../../src/constants/locations';
 
@@ -158,8 +159,9 @@ export default function HomeScreen() {
     setPickerModal({ visible: true, title, options, selected, onSelect, separatorAfter });
   };
 
-  // Whether the current vehicle tab is motorbikes
+  // Whether the current vehicle tab is motorbikes or trucks
   const isMotorbike = vehicleType === 'motorbikes';
+  const isTruck = vehicleType === 'trucks';
 
   const handleVehicleTypeChange = (type: HomeVehicleType) => {
     setVehicleType(type);
@@ -184,7 +186,12 @@ export default function HomeScreen() {
     if (yearTo) params.maxYear = yearTo;
     if (mileage) params.maxMileage = mileage;
     if (location) params.location = location;
-    if (vehicleType !== 'cars') params.vehicleType = vehicleType.toUpperCase();
+    // Map home tab IDs to backend VehicleType enum values
+    const vehicleTypeMap: Record<string, string> = {
+      motorbikes: 'MOTORCYCLE',
+      trucks: 'TRUCK',
+    };
+    if (vehicleType !== 'cars') params.vehicleType = vehicleTypeMap[vehicleType] ?? vehicleType.toUpperCase();
     router.push({ pathname: '/(tabs)/search', params });
   };
 
@@ -198,25 +205,30 @@ export default function HomeScreen() {
     { id: 'trucks', label: t.home.trucks, icon: 'bus-outline' },
   ];
 
-  // Make list: use motorcycle brands when the motorbikes tab is active
+  // Make list: use motorcycle brands when motorbikes tab is active,
+  // truck brands when trucks tab is active, car brands otherwise
   const makeOptions = useMemo(() => {
-    const makes = isMotorbike ? MOTORCYCLE_MAKES_SORTED : CAR_MAKES;
+    const makes = isMotorbike ? MOTORCYCLE_MAKES_SORTED : isTruck ? TRUCK_MAKES_SORTED : CAR_MAKES;
     return makes.map(m => ({ label: m, value: m }));
-  }, [isMotorbike]);
+  }, [isMotorbike, isTruck]);
 
   // Separator index: popular brands end at this position (separator drawn after)
   const makeSeparatorIndex = isMotorbike
     ? POPULAR_MOTORCYCLE_MAKES.length
-    : POPULAR_MAKE_NAMES.length;
+    : isTruck
+      ? POPULAR_TRUCK_MAKES.length
+      : POPULAR_MAKE_NAMES.length;
 
   // Model list: resolve against the correct brand dataset
   const modelOptions = useMemo(() => {
     if (!make) return [];
     const models = isMotorbike
       ? getMotorcycleModelsForMake(make)
-      : (CAR_MODELS_BY_MAKE[make] || []);
+      : isTruck
+        ? getTruckModelsForMake(make)
+        : (CAR_MODELS_BY_MAKE[make] || []);
     return models.map(m => ({ label: m, value: m }));
-  }, [make, isMotorbike]);
+  }, [make, isMotorbike, isTruck]);
 
   const locationOptions = useMemo(() => {
     return MUNICIPALITIES_MK.map(loc => ({ label: loc.label, value: loc.value }));

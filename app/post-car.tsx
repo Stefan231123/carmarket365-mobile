@@ -15,6 +15,7 @@ import { useLanguage } from '../src/context/LanguageContext';
 import {
   CAR_MAKES, POPULAR_MAKE_NAMES, COMMON_FEATURES, COMMON_SAFETY,
   MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES,
+  TRUCK_MAKES_SORTED, POPULAR_TRUCK_MAKES,
 } from '../src/constants/car-data';
 import { VehicleType, FuelType, TransmissionType, CarCondition, DrivetrainType } from '../src/constants/enums';
 
@@ -98,12 +99,10 @@ export default function PostCarScreen() {
 
   const updateForm = (field: keyof CarFormData, value: string | boolean | string[]) => {
     setForm((f) => {
-      // When vehicle type changes between motorcycle and non-motorcycle modes,
+      // When vehicle type changes between car/motorcycle/truck modes,
       // reset make and model so stale brands are not carried over
       if (field === 'vehicleType' && typeof value === 'string') {
-        const prevIsMotorcycle = f.vehicleType === VehicleType.MOTORCYCLE;
-        const nextIsMotorcycle = value === VehicleType.MOTORCYCLE;
-        if (prevIsMotorcycle !== nextIsMotorcycle) {
+        if (f.vehicleType !== value) {
           return { ...f, vehicleType: value, make: '', model: '' };
         }
       }
@@ -268,16 +267,19 @@ export default function PostCarScreen() {
     }
   };
 
-  // Whether the current form is in motorcycle mode — drives make/model data sources
+  // Detect current vehicle mode — drives make/model data sources
   const isMotorcycle = form.vehicleType === VehicleType.MOTORCYCLE;
+  const isTruck = form.vehicleType === VehicleType.TRUCK;
 
   const getPickerOptions = (): { label: string; value: string }[] => {
     switch (pickerField) {
       case 'make':
-        // Use motorcycle brands when the selected vehicle type is MOTORCYCLE
+        // Use the correct brand list for the selected vehicle type
         return isMotorcycle
           ? MOTORCYCLE_MAKES_SORTED.map((m) => ({ label: m, value: m }))
-          : CAR_MAKES.map((m) => ({ label: m, value: m }));
+          : isTruck
+            ? TRUCK_MAKES_SORTED.map((m) => ({ label: m, value: m }))
+            : CAR_MAKES.map((m) => ({ label: m, value: m }));
       case 'vehicleType': return Object.values(VehicleType).map((v) => ({ label: translateEnum('vehicleTypes', v, t.enums), value: v }));
       case 'condition': return Object.values(CarCondition).map((v) => ({ label: translateEnum('conditions', v, t.enums), value: v }));
       case 'fuelType': return Object.values(FuelType).map((v) => ({ label: translateEnum('fuelTypes', v, t.enums), value: v }));
@@ -523,7 +525,13 @@ export default function PostCarScreen() {
             <ScrollView style={styles.pickerList}>
               {getPickerOptions().map((opt, idx) => (
                 <React.Fragment key={opt.value}>
-                  {pickerField === 'make' && idx === (isMotorcycle ? POPULAR_MOTORCYCLE_MAKES.length : POPULAR_MAKE_NAMES.length) && (
+                  {pickerField === 'make' && idx === (
+                    isMotorcycle
+                      ? POPULAR_MOTORCYCLE_MAKES.length
+                      : isTruck
+                        ? POPULAR_TRUCK_MAKES.length
+                        : POPULAR_MAKE_NAMES.length
+                  ) && (
                     <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 8 }} />
                   )}
                   <Pressable

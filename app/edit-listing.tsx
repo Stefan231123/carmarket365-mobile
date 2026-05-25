@@ -12,7 +12,7 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../src/constants/them
 import { formatEnum, translateEnum } from '../src/utils/formatters';
 import { uploadImageToS3 } from '../src/utils/s3-upload';
 import { useLanguage } from '../src/context/LanguageContext';
-import { CAR_MAKES, POPULAR_MAKE_NAMES, COMMON_FEATURES, COMMON_SAFETY, MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES } from '../src/constants/car-data';
+import { CAR_MAKES, POPULAR_MAKE_NAMES, COMMON_FEATURES, COMMON_SAFETY, MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES, TRUCK_MAKES_SORTED, POPULAR_TRUCK_MAKES } from '../src/constants/car-data';
 import { VehicleType, FuelType, TransmissionType, CarCondition, DrivetrainType } from '../src/constants/enums';
 
 const GET_CAR = gql`
@@ -294,8 +294,13 @@ export default function EditListingScreen() {
   const getPickerOptions = (): { label: string; value: string }[] => {
     switch (pickerField) {
       case 'make': {
-        const isMotorcycle = form.vehicleType === 'MOTORCYCLE';
-        const makes = isMotorcycle ? MOTORCYCLE_MAKES_SORTED : CAR_MAKES;
+        const isMotorcycle = form.vehicleType === VehicleType.MOTORCYCLE;
+        const isTruck = form.vehicleType === VehicleType.TRUCK;
+        const makes = isMotorcycle
+          ? MOTORCYCLE_MAKES_SORTED
+          : isTruck
+            ? TRUCK_MAKES_SORTED
+            : CAR_MAKES;
         return makes.map((m) => ({ label: m, value: m }));
       }
       case 'vehicleType': return Object.values(VehicleType).map((v) => ({ label: translateEnum('vehicleTypes', v, t.enums), value: v }));
@@ -526,7 +531,13 @@ export default function EditListingScreen() {
             <ScrollView style={styles.pickerList}>
               {getPickerOptions().map((opt, idx) => (
                 <React.Fragment key={opt.value}>
-                  {pickerField === 'make' && idx === (form.vehicleType === 'MOTORCYCLE' ? POPULAR_MOTORCYCLE_MAKES.length : POPULAR_MAKE_NAMES.length) && (
+                  {pickerField === 'make' && idx === (
+                    form.vehicleType === VehicleType.MOTORCYCLE
+                      ? POPULAR_MOTORCYCLE_MAKES.length
+                      : form.vehicleType === VehicleType.TRUCK
+                        ? POPULAR_TRUCK_MAKES.length
+                        : POPULAR_MAKE_NAMES.length
+                  ) && (
                     <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 8 }} />
                   )}
                   <Pressable
