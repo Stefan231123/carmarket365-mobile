@@ -10,7 +10,10 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/t
 import { CarCard } from '../../src/components/CarCard';
 import { useSavedCarIds, useToggleSave } from '../../src/hooks/useSaveCar';
 import { useLanguage } from '../../src/context/LanguageContext';
-import { CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES } from '../../src/constants/car-data';
+import {
+  CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES,
+  MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES, getMotorcycleModelsForMake,
+} from '../../src/constants/car-data';
 import { MUNICIPALITIES_MK } from '../../src/constants/locations';
 
 // ── Data ──────────────────────────────────────────────────────────
@@ -155,6 +158,17 @@ export default function HomeScreen() {
     setPickerModal({ visible: true, title, options, selected, onSelect, separatorAfter });
   };
 
+  // Whether the current vehicle tab is motorbikes
+  const isMotorbike = vehicleType === 'motorbikes';
+
+  const handleVehicleTypeChange = (type: HomeVehicleType) => {
+    setVehicleType(type);
+    // Reset make/model when switching vehicle type so stale car makes
+    // are not carried over to motorcycle mode (or vice versa)
+    setMake('');
+    setModel('');
+  };
+
   const handleMakeChange = (value: string) => {
     setMake(value);
     setModel(''); // Reset model when make changes
@@ -184,13 +198,25 @@ export default function HomeScreen() {
     { id: 'trucks', label: t.home.trucks, icon: 'bus-outline' },
   ];
 
-  const makeOptions = CAR_MAKES.map(m => ({ label: m, value: m }));
+  // Make list: use motorcycle brands when the motorbikes tab is active
+  const makeOptions = useMemo(() => {
+    const makes = isMotorbike ? MOTORCYCLE_MAKES_SORTED : CAR_MAKES;
+    return makes.map(m => ({ label: m, value: m }));
+  }, [isMotorbike]);
 
+  // Separator index: popular brands end at this position (separator drawn after)
+  const makeSeparatorIndex = isMotorbike
+    ? POPULAR_MOTORCYCLE_MAKES.length
+    : POPULAR_MAKE_NAMES.length;
+
+  // Model list: resolve against the correct brand dataset
   const modelOptions = useMemo(() => {
     if (!make) return [];
-    const models = CAR_MODELS_BY_MAKE[make] || [];
+    const models = isMotorbike
+      ? getMotorcycleModelsForMake(make)
+      : (CAR_MODELS_BY_MAKE[make] || []);
     return models.map(m => ({ label: m, value: m }));
-  }, [make]);
+  }, [make, isMotorbike]);
 
   const locationOptions = useMemo(() => {
     return MUNICIPALITIES_MK.map(loc => ({ label: loc.label, value: loc.value }));
@@ -243,7 +269,7 @@ export default function HomeScreen() {
                 <Pressable
                   key={type.id}
                   style={[styles.vehicleTypeBtn, vehicleType === type.id && styles.vehicleTypeBtnActive]}
-                  onPress={() => setVehicleType(type.id)}
+                  onPress={() => handleVehicleTypeChange(type.id)}
                 >
                   <Ionicons
                     name={type.icon}
@@ -263,7 +289,7 @@ export default function HomeScreen() {
                 <Text style={styles.fieldLabel}>{t.home.make}</Text>
                 <Pressable
                   style={styles.selectInput}
-                  onPress={() => openPicker(t.home.make, makeOptions, make, handleMakeChange, POPULAR_MAKE_NAMES.length)}
+                  onPress={() => openPicker(t.home.make, makeOptions, make, handleMakeChange, makeSeparatorIndex)}
                 >
                   <Text style={[styles.selectText, !make && styles.selectPlaceholder]} numberOfLines={1}>
                     {make || t.home.anyMake}

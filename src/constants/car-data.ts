@@ -1349,3 +1349,107 @@ export const POPULAR_BRANDS = [
   { name: 'Fiat', initials: 'Fi', color: '#9E1B32', logo: '/brands/fiat.png' },
   { name: 'Hyundai', initials: 'H', color: '#002C5F', logo: '/brands/hyundai.png' },
 ] as const;
+// ─── MOTORCYCLE DATA ─────────────────────────────────────────────────────────
+
+export interface MotorcycleMakeData {
+  name: string;
+  country: string;
+  models: string[];
+}
+
+export const MOTORCYCLE_DATA: MotorcycleMakeData[] = [
+  { name: 'Aprilia', country: 'IT', models: ['Dorsoduro', 'RS 125', 'RS 457', 'RS 660', 'RSV4', 'Shiver', 'SR GT', 'SX 125', 'Tuareg 660', 'Tuono'] },
+  { name: 'Benelli', country: 'IT', models: ['502C', '752S', 'BN 125', 'Imperiale 400', 'Leoncino', 'TRK 502', 'TRK 702'] },
+  { name: 'Beta', country: 'IT', models: ['Alp 4.0', 'RR 125', 'RR 200', 'RR 250', 'RR 300', 'RR 350', 'RR 390', 'RR 430', 'RR 480', 'Xtrainer'] },
+  { name: 'Bimota', country: 'IT', models: ['KB4', 'Tesi H2'] },
+  { name: 'BMW', country: 'DE', models: ['C 400 GT', 'C 400 X', 'CE 04', 'F 750 GS', 'F 800 GS', 'F 850 GS', 'F 900 R', 'F 900 XR', 'G 310 GS', 'G 310 R', 'K 1600 B', 'K 1600 GT', 'K 1600 GTL', 'M 1000 R', 'M 1000 RR', 'R 1250 GS', 'R 1250 GS Adventure', 'R 1250 R', 'R 1250 RS', 'R 1250 RT', 'R 1300 GS', 'R 18', 'R NineT', 'S 1000 R', 'S 1000 RR', 'S 1000 XR'] },
+  { name: 'Brixton', country: 'AT', models: ['Cromwell 1200', 'Crossfire 500', 'Felsberg 250', 'Rayburn 125', 'Sunray 125'] },
+  { name: 'BSA', country: 'GB', models: ['Gold Star 650'] },
+  { name: 'Buell', country: 'US', models: ['Hammerhead 1190', 'Super Cruiser'] },
+  { name: 'Cagiva', country: 'IT', models: ['Elefant', 'Mito', 'Navigator', 'Raptor'] },
+  { name: 'Can-Am', country: 'CA', models: ['Ryker', 'Spyder F3', 'Spyder RT'] },
+  { name: 'CF Moto', country: 'CN', models: ['300NK', '400NK', '450MT', '650GT', '650MT', '700CL-X', '800MT'] },
+  { name: 'Daelim', country: 'KR', models: ['Daystar', 'Roadwin', 'S3'] },
+  { name: 'Derbi', country: 'ES', models: ['GPR 125', 'Senda', 'Terra'] },
+  { name: 'Ducati', country: 'IT', models: ['Diavel', 'DesertX', 'Hypermotard', 'Monster', 'Multistrada', 'Multistrada V4', 'Panigale V2', 'Panigale V4', 'Scrambler', 'Streetfighter V2', 'Streetfighter V4', 'SuperSport', 'XDiavel'] },
+  { name: 'Fantic', country: 'IT', models: ['Caballero 125', 'Caballero 500', 'Rally 500', 'XEF 125', 'XMF 125'] },
+  { name: 'Gas Gas', country: 'ES', models: ['EC 250', 'EC 300', 'ES 700', 'MC 250F', 'MC 450F', 'SM 700'] },
+  { name: 'Gilera', country: 'IT', models: ['Fuoco', 'GP 800', 'Nexus', 'Runner'] },
+  { name: 'Harley-Davidson', country: 'US', models: ['Breakout', 'CVO Road Glide', 'Electra Glide', 'Fat Bob', 'Fat Boy', 'Forty-Eight', 'Heritage Classic', 'Iron 883', 'LiveWire', 'Low Rider', 'Low Rider S', 'Nightster', 'Pan America', 'Road Glide', 'Road King', 'Softail Standard', 'Sport Glide', 'Sportster S', 'Street Bob', 'Street Glide', 'Ultra Limited'] },
+  { name: 'Honda', country: 'JP', models: ['ADV 350', 'Africa Twin', 'CB 125R', 'CB 300R', 'CB 500F', 'CB 500X', 'CB 650R', 'CB 750 Hornet', 'CB 1000R', 'CBR 125R', 'CBR 500R', 'CBR 650R', 'CBR 1000RR', 'CL 500', 'CMX 500 Rebel', 'CRF 250L', 'CRF 300L', 'CRF 1100L', 'Forza 125', 'Forza 350', 'Forza 750', 'GL 1800 Gold Wing', 'MSX 125 Grom', 'NC 750X', 'NT 1100', 'PCX 125', 'SH 125', 'Transalp', 'X-ADV'] },
+  { name: 'Horex', country: 'DE', models: ['VR6'] },
+  { name: 'Husqvarna', country: 'SE', models: ['401 Svartpilen', '401 Vitpilen', '701 Enduro', '701 Supermoto', '801 Svartpilen', 'Norden 901', 'FC 250', 'FC 450', 'FE 250', 'FE 350', 'FE 450', 'FE 501', 'TE 150', 'TE 250', 'TE 300'] },
+  { name: 'Hyosung', country: 'KR', models: ['GD 250', 'GT 125', 'GT 250', 'GT 650'] },
+  { name: 'Indian', country: 'US', models: ['Challenger', 'Chief', 'Chief Bobber', 'Chieftain', 'FTR', 'FTR Rally', 'Pursuit', 'Roadmaster', 'Scout', 'Scout Bobber', 'Springfield', 'Super Chief'] },
+  { name: 'Italjet', country: 'IT', models: ['Dragster'] },
+  { name: 'Kawasaki', country: 'JP', models: ['Eliminator', 'ER-6n', 'KLR 650', 'KLX 300', 'KX 250', 'KX 450', 'Ninja 125', 'Ninja 300', 'Ninja 400', 'Ninja 650', 'Ninja 1000SX', 'Ninja H2', 'Ninja ZX-4R', 'Ninja ZX-6R', 'Ninja ZX-10R', 'Versys 650', 'Versys 1000', 'Vulcan S', 'W800', 'Z 125', 'Z 400', 'Z 650', 'Z 900', 'Z H2', 'ZX-4RR'] },
+  { name: 'Keeway', country: 'CN', models: ['K-Light 125', 'RKF 125', 'V 302C'] },
+  { name: 'KTM', country: 'AT', models: ['125 Duke', '200 Duke', '250 Adventure', '250 Duke', '390 Adventure', '390 Duke', '690 Enduro', '690 SMC R', '790 Adventure', '790 Duke', '890 Adventure', '890 Duke', '990 Duke', '1290 Super Adventure', '1290 Super Duke R', '1390 Super Duke R', 'EXC 250', 'EXC 300', 'EXC-F 350', 'EXC-F 450', 'EXC-F 500', 'Freeride', 'RC 125', 'RC 390', 'SX 125', 'SX 250', 'SX-F 350', 'SX-F 450'] },
+  { name: 'Kymco', country: 'TW', models: ['AK 550', 'Agility', 'CV3', 'Downtown', 'Like', 'People', 'X-Town'] },
+  { name: 'Lambretta', country: 'IT', models: ['V125', 'V200', 'X300'] },
+  { name: 'Mash', country: 'FR', models: ['Adventure 400', 'Black Seven 125', 'Dirt Star 400', 'X-Ride 650'] },
+  { name: 'Moto Guzzi', country: 'IT', models: ['Audace', 'California', 'Griso', 'Norge', 'Stelvio', 'V100 Mandello', 'V7', 'V85 TT', 'V9'] },
+  { name: 'Moto Morini', country: 'IT', models: ['Seiemmezzo', 'X-Cape'] },
+  { name: 'MV Agusta', country: 'IT', models: ['Brutale', 'Dragster', 'F3', 'Rush', 'Superveloce', 'Turismo Veloce'] },
+  { name: 'Norton', country: 'GB', models: ['Commando', 'V4SV'] },
+  { name: 'Peugeot', country: 'FR', models: ['Django', 'Metropolis', 'Pulsion', 'Speedfight', 'Tweet', 'XP 400'] },
+  { name: 'Piaggio', country: 'IT', models: ['Beverly', 'Liberty', 'Medley', 'MP3', 'X10'] },
+  { name: 'Polaris', country: 'US', models: ['Scrambler', 'Sportsman', 'RZR'] },
+  { name: 'Royal Enfield', country: 'IN', models: ['Bullet 350', 'Classic 350', 'Continental GT 650', 'Guerrilla 450', 'Himalayan', 'Hunter 350', 'INT 650', 'Meteor 350', 'Scram 411', 'Super Meteor 650'] },
+  { name: 'Sherco', country: 'FR', models: ['SE 125', 'SE 250', 'SE 300', 'SEF 250', 'SEF 300', 'SEF 450', 'SEF 500'] },
+  { name: 'SWM', country: 'IT', models: ['Gran Milano 440', 'RS 125', 'Silver Vase 440', 'Superdual 600'] },
+  { name: 'SYM', country: 'TW', models: ['Cruisym', 'Joymax', 'Maxsym', 'NH T'] },
+  { name: 'Triumph', country: 'GB', models: ['Bobber', 'Bonneville T100', 'Bonneville T120', 'Daytona 660', 'Explorer 1200', 'Rocket 3', 'Scrambler 400', 'Scrambler 900', 'Speed 400', 'Speed Triple', 'Speed Twin', 'Street Scrambler', 'Street Triple', 'Thruxton', 'Tiger 660', 'Tiger 850', 'Tiger 900', 'Tiger 1200', 'Trident 660', 'TF 250-X'] },
+  { name: 'TM', country: 'IT', models: ['EN 125', 'EN 250', 'EN 300', 'MX 125', 'MX 250', 'MX 450', 'SMR 125'] },
+  { name: 'Ural', country: 'RU', models: ['CT', 'Gear Up', 'Sportsman'] },
+  { name: 'Vespa', country: 'IT', models: ['Elettrica', 'GTS 125', 'GTS 300', 'GTV', 'Primavera', 'Sprint'] },
+  { name: 'Voge', country: 'CN', models: ['300AC', '500DS', '500R', '650DS', '900DS'] },
+  { name: 'Yamaha', country: 'JP', models: ['FJR 1300', 'MT-03', 'MT-07', 'MT-09', 'MT-10', 'NMAX', 'R1', 'R125', 'R3', 'R6', 'R7', 'T-Max', 'Tenere 700', 'Tracer 7', 'Tracer 9', 'Tracer 9 GT', 'X-Max', 'XJ6', 'XSR 125', 'XSR 700', 'XSR 900', 'YZ 125', 'YZ 250', 'YZ 250F', 'YZ 450F', 'YZF-R125'] },
+  { name: 'Zero', country: 'US', models: ['DS', 'DSR/X', 'FX', 'FXE', 'S', 'SR', 'SR/F', 'SR/S'] },
+  { name: 'Zontes', country: 'CN', models: ['310R', '310T', '310V', '310X', '350D', '350T'] },
+];
+
+/** All motorcycle make names sorted alphabetically */
+export const MOTORCYCLE_MAKES: string[] = MOTORCYCLE_DATA.map((m) => m.name).sort();
+
+/** Most frequent motorcycle brands — shown first in dropdowns */
+export const POPULAR_MOTORCYCLE_MAKES: string[] = [
+  'BMW', 'Ducati', 'Harley-Davidson', 'Honda', 'Kawasaki',
+  'KTM', 'Suzuki', 'Yamaha', 'Triumph', 'Aprilia',
+];
+
+/** Motorcycle makes ordered with popular brands first, then rest alphabetically */
+export const MOTORCYCLE_MAKES_SORTED: string[] = [
+  ...POPULAR_MOTORCYCLE_MAKES,
+  ...MOTORCYCLE_MAKES.filter((m) => !POPULAR_MOTORCYCLE_MAKES.includes(m)),
+];
+
+/** Motorcycle make → models lookup */
+export const MOTORCYCLE_MODELS_BY_MAKE: Record<string, string[]> = Object.fromEntries(
+  MOTORCYCLE_DATA.map((m) => [m.name, m.models]),
+);
+
+/** Get models for a given motorcycle make */
+export function getMotorcycleModelsForMake(make: string): string[] {
+  return MOTORCYCLE_MODELS_BY_MAKE[make] ?? [];
+}
+
+/** Motorcycle body types / categories */
+export const MOTORCYCLE_BODY_TYPES: string[] = [
+  'Naked Bike',
+  'Sport',
+  'Touring',
+  'Cruiser/Chopper',
+  'Enduro',
+  'Adventure',
+  'Supermoto',
+  'Scooter',
+  'Classic/Retro',
+  'Motocross',
+  'Quad/ATV',
+  'Moped',
+  'Minibike',
+  'Sidecar',
+  'Trial',
+  'Rally',
+];

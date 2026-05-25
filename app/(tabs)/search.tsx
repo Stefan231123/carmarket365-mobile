@@ -11,7 +11,11 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/t
 import { formatEnum, translateEnum } from '../../src/utils/formatters';
 import { CarCard } from '../../src/components/CarCard';
 import { CarFilter } from '../../src/types';
-import { CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES } from '../../src/constants/car-data';
+import {
+  CAR_MAKES, CAR_MODELS_BY_MAKE, POPULAR_MAKE_NAMES,
+  MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES, getMotorcycleModelsForMake,
+  MOTORCYCLE_BODY_TYPES,
+} from '../../src/constants/car-data';
 import { MUNICIPALITIES_MK } from '../../src/constants/locations';
 import { FuelType, TransmissionType, CarCondition, VehicleType, DrivetrainType } from '../../src/constants/enums';
 import { useSavedCarIds, useToggleSave } from '../../src/hooks/useSaveCar';
@@ -202,12 +206,18 @@ export default function SearchScreen() {
   const [draftSortBy, setDraftSortBy] = useState('createdAt');
   const [draftSortOrder, setDraftSortOrder] = useState('DESC');
 
-  // Dynamic model options
+  // Whether the draft filter panel is currently set to motorcycle mode
+  const isMotorbikeFilter = draftFilters.vehicleType === VehicleType.MOTORCYCLE;
+
+  // Dynamic model options — use motorcycle models when vehicle type is MOTORCYCLE
   const modelOptions = useMemo(() => {
     const make = draftFilters.make;
     if (!make) return [];
-    return (CAR_MODELS_BY_MAKE[make] || []).map((m) => ({ label: m, value: m }));
-  }, [draftFilters.make]);
+    const models = isMotorbikeFilter
+      ? getMotorcycleModelsForMake(make)
+      : (CAR_MODELS_BY_MAKE[make] || []);
+    return models.map((m) => ({ label: m, value: m }));
+  }, [draftFilters.make, isMotorbikeFilter]);
 
   // Location options
   const locationOptions = useMemo(() => {
@@ -293,7 +303,10 @@ export default function SearchScreen() {
   const getPickerOptions = (): { label: string; value: string }[] => {
     switch (pickerField) {
       case 'make':
-        return CAR_MAKES.map((m) => ({ label: m, value: m }));
+        // Use motorcycle makes when the vehicleType filter is set to MOTORCYCLE
+        return isMotorbikeFilter
+          ? MOTORCYCLE_MAKES_SORTED.map((m) => ({ label: m, value: m }))
+          : CAR_MAKES.map((m) => ({ label: m, value: m }));
       case 'model':
         return modelOptions;
       case 'fuelType':
@@ -351,6 +364,16 @@ export default function SearchScreen() {
       setDraftSortOrder(so);
     } else if (pickerField === 'make') {
       setDraftFilters((f) => ({ ...f, make: value, model: undefined }));
+    } else if (pickerField === 'vehicleType') {
+      // When vehicle type changes, clear make and model so the user cannot
+      // carry a car brand into motorcycle mode (or vice versa)
+      const prevIsMotorbike = draftFilters.vehicleType === VehicleType.MOTORCYCLE;
+      const nextIsMotorbike = value === VehicleType.MOTORCYCLE;
+      if (prevIsMotorbike !== nextIsMotorbike) {
+        setDraftFilters((f) => ({ ...f, vehicleType: value as any, make: undefined, model: undefined }));
+      } else {
+        setDraftFilters((f) => ({ ...f, vehicleType: value as any }));
+      }
     } else if (numericFields.includes(pickerField)) {
       setDraftFilters((f) => ({ ...f, [pickerField]: parseInt(value) }));
     } else if (floatFields.includes(pickerField)) {
@@ -952,7 +975,7 @@ export default function SearchScreen() {
               const isSelected = currentVal === item.value;
               return (
                 <>
-                  {pickerField === 'make' && index === POPULAR_MAKE_NAMES.length && (
+                  {pickerField === 'make' && index === (isMotorbikeFilter ? POPULAR_MOTORCYCLE_MAKES.length : POPULAR_MAKE_NAMES.length) && (
                     <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 8 }} />
                   )}
                   <Pressable style={styles.pickerItem} onPress={() => handlePickerSelect(item.value)}>
