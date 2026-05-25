@@ -1272,34 +1272,20 @@ export const CAR_DATA: CarMakeData[] = [
 // Helper functions
 // ═══════════════════════════════════════
 
-/** Common vehicle features used in listing forms */
-export const COMMON_FEATURES = [
-  'Air Conditioning', 'Climate Control', 'Heated Seats', 'Leather Seats',
-  'Navigation System', 'Bluetooth', 'USB Port', 'Apple CarPlay', 'Android Auto',
-  'Cruise Control', 'Parking Sensors', 'Backup Camera', 'Sunroof',
-  'Keyless Entry', 'Push Button Start', 'Alloy Wheels', 'LED Headlights',
-  'Fog Lights', 'Rain Sensor', 'Electric Windows', 'Electric Mirrors',
-] as const;
+/** Most frequent brands — shown first in search dropdowns */
+export const POPULAR_MAKE_NAMES: string[] = [
+  'BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Toyota',
+  'Renault', 'Peugeot', 'Škoda', 'Opel', 'Ford',
+  'Fiat', 'Hyundai',
+];
 
-/** Common safety features used in listing forms */
-export const COMMON_SAFETY = [
-  'ABS', 'ESP', 'Airbags', 'Side Airbags', 'Curtain Airbags',
-  'ISOFIX', 'Lane Assist', 'Blind Spot Monitor', 'Forward Collision Warning',
-  'Automatic Emergency Braking', 'Tire Pressure Monitor', 'Traction Control',
-] as const;
+/** All make names sorted alphabetically */
+export const CAR_MAKES: string[] = CAR_DATA.map((m) => m.name).sort();
 
-/** Popular brands shown first in dropdowns (matches website order) */
-export const POPULAR_MAKE_NAMES = [
-  'BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Toyota', 'Opel',
-  'Ford', 'Renault', 'Peugeot', 'Škoda', 'Fiat', 'Hyundai',
-] as const;
-
-/** All make names — popular brands first, then rest alphabetically */
-export const CAR_MAKES: string[] = [
+/** Makes ordered with popular brands first, then the rest alphabetically */
+export const CAR_MAKES_SORTED: string[] = [
   ...POPULAR_MAKE_NAMES,
-  ...CAR_DATA.map((m) => m.name)
-    .filter((name) => !POPULAR_MAKE_NAMES.includes(name as any))
-    .sort(),
+  ...CAR_MAKES.filter((m) => !POPULAR_MAKE_NAMES.includes(m)),
 ];
 
 /** Make → models lookup */
@@ -1349,6 +1335,7 @@ export const POPULAR_BRANDS = [
   { name: 'Fiat', initials: 'Fi', color: '#9E1B32', logo: '/brands/fiat.png' },
   { name: 'Hyundai', initials: 'H', color: '#002C5F', logo: '/brands/hyundai.png' },
 ] as const;
+
 // ─── MOTORCYCLE DATA ─────────────────────────────────────────────────────────
 
 export interface MotorcycleMakeData {
@@ -1363,30 +1350,41 @@ export const MOTORCYCLE_DATA: MotorcycleMakeData[] = [
   { name: 'Beta', country: 'IT', models: ['Alp 4.0', 'RR 125', 'RR 200', 'RR 250', 'RR 300', 'RR 350', 'RR 390', 'RR 430', 'RR 480', 'Xtrainer'] },
   { name: 'Bimota', country: 'IT', models: ['KB4', 'Tesi H2'] },
   { name: 'BMW', country: 'DE', models: ['C 400 GT', 'C 400 X', 'CE 04', 'F 750 GS', 'F 800 GS', 'F 850 GS', 'F 900 R', 'F 900 XR', 'G 310 GS', 'G 310 R', 'K 1600 B', 'K 1600 GT', 'K 1600 GTL', 'M 1000 R', 'M 1000 RR', 'R 1250 GS', 'R 1250 GS Adventure', 'R 1250 R', 'R 1250 RS', 'R 1250 RT', 'R 1300 GS', 'R 18', 'R NineT', 'S 1000 R', 'S 1000 RR', 'S 1000 XR'] },
+  { name: 'Baotian', country: 'CN', models: ['BT49QT', 'BT50QT', 'BT125T', 'BT150T', 'Monza 125', 'Rocky', 'Tanco'] },
+  { name: 'Benda', country: 'CN', models: ['BD300', 'Chinchilla', 'Dark Flag 500', 'LFC 700', 'LFS 700', 'Napoleon 500'] },
   { name: 'Brixton', country: 'AT', models: ['Cromwell 1200', 'Crossfire 500', 'Felsberg 250', 'Rayburn 125', 'Sunray 125'] },
   { name: 'BSA', country: 'GB', models: ['Gold Star 650'] },
   { name: 'Buell', country: 'US', models: ['Hammerhead 1190', 'Super Cruiser'] },
   { name: 'Cagiva', country: 'IT', models: ['Elefant', 'Mito', 'Navigator', 'Raptor'] },
   { name: 'Can-Am', country: 'CA', models: ['Ryker', 'Spyder F3', 'Spyder RT'] },
   { name: 'CF Moto', country: 'CN', models: ['300NK', '400NK', '450MT', '650GT', '650MT', '700CL-X', '800MT'] },
+  { name: 'Cyclone', country: 'CN', models: ['RA2', 'RA6', 'RA8', 'RX3', 'RX6', 'RG3'] },
   { name: 'Daelim', country: 'KR', models: ['Daystar', 'Roadwin', 'S3'] },
   { name: 'Derbi', country: 'ES', models: ['GPR 125', 'Senda', 'Terra'] },
   { name: 'Ducati', country: 'IT', models: ['Diavel', 'DesertX', 'Hypermotard', 'Monster', 'Multistrada', 'Multistrada V4', 'Panigale V2', 'Panigale V4', 'Scrambler', 'Streetfighter V2', 'Streetfighter V4', 'SuperSport', 'XDiavel'] },
   { name: 'Fantic', country: 'IT', models: ['Caballero 125', 'Caballero 500', 'Rally 500', 'XEF 125', 'XMF 125'] },
+  { name: 'Garelli', country: 'IT', models: ['Ciclone', 'Flexi', 'Tiger', 'Tiesse 125', 'XO 125', 'XO 150'] },
   { name: 'Gas Gas', country: 'ES', models: ['EC 250', 'EC 300', 'ES 700', 'MC 250F', 'MC 450F', 'SM 700'] },
   { name: 'Gilera', country: 'IT', models: ['Fuoco', 'GP 800', 'Nexus', 'Runner'] },
+  { name: 'Hamachi', country: 'MK', models: ['50R-15', 'Alex One 200', 'Ceaser 200', 'Cossack 250', 'Dake R2', 'Force 150', 'GY-5 Dessert 200', 'HM 300 C5D', 'JSN 50', 'KRS 150', 'Naked 14', 'NF 150', 'RCX 250', 'Renegade 300', 'Rocket 50', 'Rocket 125', 'YX 125 Kross', 'YX 250', 'YX 300'] },
   { name: 'Harley-Davidson', country: 'US', models: ['Breakout', 'CVO Road Glide', 'Electra Glide', 'Fat Bob', 'Fat Boy', 'Forty-Eight', 'Heritage Classic', 'Iron 883', 'LiveWire', 'Low Rider', 'Low Rider S', 'Nightster', 'Pan America', 'Road Glide', 'Road King', 'Softail Standard', 'Sport Glide', 'Sportster S', 'Street Bob', 'Street Glide', 'Ultra Limited'] },
+  { name: 'Hisun', country: 'CN', models: ['HS400', 'HS500', 'HS700', 'HS800', 'Sector 550', 'Sector 750', 'Strike 250'] },
   { name: 'Honda', country: 'JP', models: ['ADV 350', 'Africa Twin', 'CB 125R', 'CB 300R', 'CB 500F', 'CB 500X', 'CB 650R', 'CB 750 Hornet', 'CB 1000R', 'CBR 125R', 'CBR 500R', 'CBR 650R', 'CBR 1000RR', 'CL 500', 'CMX 500 Rebel', 'CRF 250L', 'CRF 300L', 'CRF 1100L', 'Forza 125', 'Forza 350', 'Forza 750', 'GL 1800 Gold Wing', 'MSX 125 Grom', 'NC 750X', 'NT 1100', 'PCX 125', 'SH 125', 'Transalp', 'X-ADV'] },
   { name: 'Horex', country: 'DE', models: ['VR6'] },
   { name: 'Husqvarna', country: 'SE', models: ['401 Svartpilen', '401 Vitpilen', '701 Enduro', '701 Supermoto', '801 Svartpilen', 'Norden 901', 'FC 250', 'FC 450', 'FE 250', 'FE 350', 'FE 450', 'FE 501', 'TE 150', 'TE 250', 'TE 300'] },
   { name: 'Hyosung', country: 'KR', models: ['GD 250', 'GT 125', 'GT 250', 'GT 650'] },
   { name: 'Indian', country: 'US', models: ['Challenger', 'Chief', 'Chief Bobber', 'Chieftain', 'FTR', 'FTR Rally', 'Pursuit', 'Roadmaster', 'Scout', 'Scout Bobber', 'Springfield', 'Super Chief'] },
   { name: 'Italjet', country: 'IT', models: ['Dragster'] },
+  { name: 'Jonway', country: 'CN', models: ['Adventure 125', 'Force 125', 'Italia 125', 'Raptor 50', 'YY125T', 'YY150T'] },
   { name: 'Kawasaki', country: 'JP', models: ['Eliminator', 'ER-6n', 'KLR 650', 'KLX 300', 'KX 250', 'KX 450', 'Ninja 125', 'Ninja 300', 'Ninja 400', 'Ninja 650', 'Ninja 1000SX', 'Ninja H2', 'Ninja ZX-4R', 'Ninja ZX-6R', 'Ninja ZX-10R', 'Versys 650', 'Versys 1000', 'Vulcan S', 'W800', 'Z 125', 'Z 400', 'Z 650', 'Z 900', 'Z H2', 'ZX-4RR'] },
   { name: 'Keeway', country: 'CN', models: ['K-Light 125', 'RKF 125', 'V 302C'] },
+  { name: 'Kove', country: 'CN', models: ['321R', '450 Rally', '500F', '500X', '800X'] },
   { name: 'KTM', country: 'AT', models: ['125 Duke', '200 Duke', '250 Adventure', '250 Duke', '390 Adventure', '390 Duke', '690 Enduro', '690 SMC R', '790 Adventure', '790 Duke', '890 Adventure', '890 Duke', '990 Duke', '1290 Super Adventure', '1290 Super Duke R', '1390 Super Duke R', 'EXC 250', 'EXC 300', 'EXC-F 350', 'EXC-F 450', 'EXC-F 500', 'Freeride', 'RC 125', 'RC 390', 'SX 125', 'SX 250', 'SX-F 350', 'SX-F 450'] },
   { name: 'Kymco', country: 'TW', models: ['AK 550', 'Agility', 'CV3', 'Downtown', 'Like', 'People', 'X-Town'] },
   { name: 'Lambretta', country: 'IT', models: ['V125', 'V200', 'X300'] },
+  { name: 'Lexmoto', country: 'GB', models: ['Adrenaline 125', 'Aspire 50', 'Assault 125', 'Echo 50', 'LXR 125', 'LXR 380', 'Milano 125', 'Riot 125', 'Tempest 125', 'Venom 125'] },
+  { name: 'Lifan', country: 'CN', models: ['CityR 200', 'KP 150', 'KP 200', 'KP Mini 150', 'KPR 200', 'KPS 250', 'KPT 200', 'V16'] },
+  { name: 'Loncin', country: 'CN', models: ['CR6', 'DSX5', 'GP300', 'LX150', 'LX200', 'LX250', 'Voge 300R', 'Voge 500DS'] },
   { name: 'Mash', country: 'FR', models: ['Adventure 400', 'Black Seven 125', 'Dirt Star 400', 'X-Ride 650'] },
   { name: 'Moto Guzzi', country: 'IT', models: ['Audace', 'California', 'Griso', 'Norge', 'Stelvio', 'V100 Mandello', 'V7', 'V85 TT', 'V9'] },
   { name: 'Moto Morini', country: 'IT', models: ['Seiemmezzo', 'X-Cape'] },
@@ -1395,9 +1393,11 @@ export const MOTORCYCLE_DATA: MotorcycleMakeData[] = [
   { name: 'Peugeot', country: 'FR', models: ['Django', 'Metropolis', 'Pulsion', 'Speedfight', 'Tweet', 'XP 400'] },
   { name: 'Piaggio', country: 'IT', models: ['Beverly', 'Liberty', 'Medley', 'MP3', 'X10'] },
   { name: 'Polaris', country: 'US', models: ['Scrambler', 'Sportsman', 'RZR'] },
+  { name: 'QJ Motor', country: 'CN', models: ['SRK 400', 'SRK 700', 'SRV 300', 'SRT 800'] },
   { name: 'Royal Enfield', country: 'IN', models: ['Bullet 350', 'Classic 350', 'Continental GT 650', 'Guerrilla 450', 'Himalayan', 'Hunter 350', 'INT 650', 'Meteor 350', 'Scram 411', 'Super Meteor 650'] },
   { name: 'Sherco', country: 'FR', models: ['SE 125', 'SE 250', 'SE 300', 'SEF 250', 'SEF 300', 'SEF 450', 'SEF 500'] },
   { name: 'SWM', country: 'IT', models: ['Gran Milano 440', 'RS 125', 'Silver Vase 440', 'Superdual 600'] },
+  { name: 'Suzuki', country: 'JP', models: ['Address 125', 'Burgman 125', 'Burgman 400', 'DR-Z 400', 'GSX 250R', 'GSX-R 125', 'GSX-R 600', 'GSX-R 750', 'GSX-R 1000', 'GSX-S 125', 'GSX-S 750', 'GSX-S 950', 'GSX-S 1000', 'GSX-8S', 'Hayabusa', 'Intruder', 'Katana', 'RM-Z 250', 'RM-Z 450', 'SV 650', 'V-Strom 250', 'V-Strom 650', 'V-Strom 800', 'V-Strom 1050'] },
   { name: 'SYM', country: 'TW', models: ['Cruisym', 'Joymax', 'Maxsym', 'NH T'] },
   { name: 'Triumph', country: 'GB', models: ['Bobber', 'Bonneville T100', 'Bonneville T120', 'Daytona 660', 'Explorer 1200', 'Rocket 3', 'Scrambler 400', 'Scrambler 900', 'Speed 400', 'Speed Triple', 'Speed Twin', 'Street Scrambler', 'Street Triple', 'Thruxton', 'Tiger 660', 'Tiger 850', 'Tiger 900', 'Tiger 1200', 'Trident 660', 'TF 250-X'] },
   { name: 'TM', country: 'IT', models: ['EN 125', 'EN 250', 'EN 300', 'MX 125', 'MX 250', 'MX 450', 'SMR 125'] },
@@ -1406,6 +1406,7 @@ export const MOTORCYCLE_DATA: MotorcycleMakeData[] = [
   { name: 'Voge', country: 'CN', models: ['300AC', '500DS', '500R', '650DS', '900DS'] },
   { name: 'Yamaha', country: 'JP', models: ['FJR 1300', 'MT-03', 'MT-07', 'MT-09', 'MT-10', 'NMAX', 'R1', 'R125', 'R3', 'R6', 'R7', 'T-Max', 'Tenere 700', 'Tracer 7', 'Tracer 9', 'Tracer 9 GT', 'X-Max', 'XJ6', 'XSR 125', 'XSR 700', 'XSR 900', 'YZ 125', 'YZ 250', 'YZ 250F', 'YZ 450F', 'YZF-R125'] },
   { name: 'Zero', country: 'US', models: ['DS', 'DSR/X', 'FX', 'FXE', 'S', 'SR', 'SR/F', 'SR/S'] },
+  { name: 'Znen', country: 'CN', models: ['Aves 150', 'F35', 'Falcon 4', 'King 50', 'T-6', 'ZN125T', 'ZN150T'] },
   { name: 'Zontes', country: 'CN', models: ['310R', '310T', '310V', '310X', '350D', '350T'] },
 ];
 
@@ -1414,7 +1415,7 @@ export const MOTORCYCLE_MAKES: string[] = MOTORCYCLE_DATA.map((m) => m.name).sor
 
 /** Most frequent motorcycle brands — shown first in dropdowns */
 export const POPULAR_MOTORCYCLE_MAKES: string[] = [
-  'BMW', 'Ducati', 'Harley-Davidson', 'Honda', 'Kawasaki',
+  'BMW', 'Ducati', 'Hamachi', 'Harley-Davidson', 'Honda', 'Kawasaki',
   'KTM', 'Suzuki', 'Yamaha', 'Triumph', 'Aprilia',
 ];
 
