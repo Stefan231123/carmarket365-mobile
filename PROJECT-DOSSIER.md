@@ -56,7 +56,7 @@ Native mobile app for the CarMarket365 car marketplace. This app consumes the **
 
 | | |
 |---|---|
-| Production URL | `https://carmarket365-backend.up.railway.app/graphql` |
+| Production URL | `https://carmarket365-production.up.railway.app/graphql` |
 | Local dev URL | `http://localhost:3002/graphql` |
 | Auth mechanism | JWT Bearer token in Authorization header |
 | Token flow | Login mutation → returns `accessToken` → store in SecureStore → attach to every request |
@@ -210,9 +210,9 @@ dealerServices: string[]
 ### CarImage
 ```
 id: UUID
-url: string          — Cloudinary URL (primary display)
+url: string          — S3 URL (primary display)
 thumbnailUrl?: string — Optional thumbnail URL
-publicId: string     — Cloudinary public_id
+publicId: string     — storage object key
 isMain: boolean      — marks the primary listing image
 isInterior?: boolean — exterior vs interior photo
 sortOrder: number    — display order (ascending)
@@ -322,21 +322,23 @@ Track progress via Linear project: **CarMarket365 Mobile App**
 
 ---
 
-## 7. IMAGES & CLOUDINARY
+## 7. IMAGES & S3
 
-Images are stored on Cloudinary. The mobile app does NOT upload directly to Cloudinary.
+Images are stored on AWS S3. The app never holds AWS credentials — it uploads via
+short-lived presigned URLs issued by the backend. See `src/utils/s3-upload.ts`.
 
-**Upload flow:**
+**Upload flow (car images):**
 1. User picks images with `expo-image-picker`
-2. App sends images to backend via `uploadCarImages` mutation (multipart)
-3. Backend uploads to Cloudinary, applies watermark, saves CarImage records
-4. Backend returns Cloudinary URLs
+2. App calls the `getImageUploadUrl(carId, fileName)` mutation → backend returns `{ uploadUrl, key }`
+3. App `PUT`s the image blob directly to `uploadUrl` (presigned S3 URL, with progress tracking)
+4. App passes the returned `key` (s3Key) back to the backend to associate the CarImage record
+
+**Upload flow (avatars):** same, but via `getAvatarUploadUrl(fileName)` followed by
+`processAvatar(s3Key)`, which returns the final avatar URL.
 
 **Display:**
-- Use Cloudinary URLs directly in `<Image>` components
-- Cloudinary cloud name: `dqduao6rg`
-- Image folder: `carmarket365/`
-- Images are watermarked server-side on upload
+- Use the S3 URLs returned by the backend directly in `<Image>` components
+- Images are watermarked/processed server-side
 
 **Image constraints:**
 - Max 50 images per listing

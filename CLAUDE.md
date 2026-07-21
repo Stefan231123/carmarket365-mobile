@@ -26,9 +26,9 @@ Before building any screen:
 
 ## Architecture Rules
 
-- **DO NOT** create a backend, API, or database — the backend exists at `carmarket365-backend.up.railway.app/graphql`
+- **DO NOT** create a backend, API, or database — the backend exists at `carmarket365-production.up.railway.app/graphql` (source: the `carmarket365-backend` repo)
 - **DO NOT** use AsyncStorage for auth tokens — use `expo-secure-store`
-- **DO NOT** upload images directly to Cloudinary from the app — go through the backend
+- **DO NOT** upload images directly to S3 with raw credentials — request a presigned URL from the backend first (see `src/utils/s3-upload.ts`)
 - All data fetching goes through Apollo Client + GraphQL
 - All types must mirror the backend schema (see `src/types/index.ts`)
 - All enums must match backend enums (see `src/constants/enums.ts`)
@@ -58,7 +58,7 @@ Before building any screen:
 
 - Car listings use cursor-based pagination (`limit` + `offset`)
 - Auth tokens stored in SecureStore, injected via Apollo Link
-- Images come as Cloudinary URLs — display directly in `<Image>`
+- Images come as S3 URLs — display directly in `<Image>`
 - Brand primary color: `#2563eb`
 - Use skeleton loaders, not spinners
 - Pull-to-refresh on all list screens

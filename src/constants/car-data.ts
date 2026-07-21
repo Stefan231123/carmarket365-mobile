@@ -1336,6 +1336,50 @@ export const POPULAR_BRANDS = [
   { name: 'Hyundai', initials: 'H', color: '#002C5F', logo: '/brands/hyundai.png' },
 ] as const;
 
+// ─── FEATURES & SAFETY ───────────────────────────────────────────────────────
+// These values are the i18n lookup keys used by `t.featureLabels[...]` and
+// `t.safetyLabels[...]` (see src/i18n/*.ts). Keep them in sync with those maps —
+// every entry here must have a translation in en/mk/sq or the raw key is shown.
+
+export const COMMON_FEATURES: string[] = [
+  'Air Conditioning',
+  'Climate Control',
+  'Heated Seats',
+  'Leather Seats',
+  'Navigation System',
+  'Bluetooth',
+  'USB Port',
+  'Apple CarPlay',
+  'Android Auto',
+  'Cruise Control',
+  'Parking Sensors',
+  'Backup Camera',
+  'Sunroof',
+  'Keyless Entry',
+  'Push Button Start',
+  'Alloy Wheels',
+  'LED Headlights',
+  'Fog Lights',
+  'Rain Sensor',
+  'Electric Windows',
+  'Electric Mirrors',
+];
+
+export const COMMON_SAFETY: string[] = [
+  'ABS',
+  'ESP',
+  'Airbags',
+  'Side Airbags',
+  'Curtain Airbags',
+  'ISOFIX',
+  'Lane Assist',
+  'Blind Spot Monitor',
+  'Forward Collision Warning',
+  'Automatic Emergency Braking',
+  'Tire Pressure Monitor',
+  'Traction Control',
+];
+
 // ─── MOTORCYCLE DATA ─────────────────────────────────────────────────────────
 
 export interface MotorcycleMakeData {

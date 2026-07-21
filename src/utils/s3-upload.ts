@@ -14,6 +14,23 @@ export interface S3UploadResult {
   fileName: string;
 }
 
+interface PresignedUpload {
+  uploadUrl: string;
+  key: string;
+}
+
+interface GetImageUploadUrlData {
+  getImageUploadUrl: PresignedUpload;
+}
+
+interface GetAvatarUploadUrlData {
+  getAvatarUploadUrl: PresignedUpload;
+}
+
+interface ProcessAvatarData {
+  processAvatar: string;
+}
+
 export async function uploadImageToS3(
   uri: string,
   carId: string,
@@ -23,11 +40,14 @@ export async function uploadImageToS3(
   const fileName = uri.split('/').pop() || 'photo.jpg';
 
   // 1. Get presigned URL from backend
-  const { data } = await client.mutate({
+  const { data } = await client.mutate<GetImageUploadUrlData>({
     mutation: GET_IMAGE_UPLOAD_URL,
     variables: { carId, fileName },
   });
-  const { uploadUrl, key } = (data as any).getImageUploadUrl;
+  if (!data?.getImageUploadUrl) {
+    throw new Error('Failed to get an upload URL from the server');
+  }
+  const { uploadUrl, key } = data.getImageUploadUrl;
 
   // 2. Read image from device URI
   const response = await fetch(uri);
@@ -79,25 +99,34 @@ export async function uploadAvatar(
   const fileName = uri.split('/').pop() || 'avatar.jpg';
 
   // 1. Get presigned URL
-  const { data } = await client.mutate({
+  const { data } = await client.mutate<GetAvatarUploadUrlData>({
     mutation: GET_AVATAR_UPLOAD_URL,
     variables: { fileName },
   });
-  const { uploadUrl, key } = (data as any).getAvatarUploadUrl;
+  if (!data?.getAvatarUploadUrl) {
+    throw new Error('Failed to get an avatar upload URL from the server');
+  }
+  const { uploadUrl, key } = data.getAvatarUploadUrl;
 
   // 2. Upload to S3
   const response = await fetch(uri);
   const blob = await response.blob();
-  await fetch(uploadUrl, {
+  const uploadResponse = await fetch(uploadUrl, {
     method: 'PUT',
     body: blob,
     headers: { 'Content-Type': blob.type || 'image/jpeg' },
   });
+  if (!uploadResponse.ok) {
+    throw new Error(`Avatar upload failed with status ${uploadResponse.status}`);
+  }
 
   // 3. Process avatar on backend and get final URL
-  const { data: processData } = await client.mutate({
+  const { data: processData } = await client.mutate<ProcessAvatarData>({
     mutation: PROCESS_AVATAR,
     variables: { s3Key: key },
   });
-  return (processData as any).processAvatar;
+  if (!processData?.processAvatar) {
+    throw new Error('Avatar processing failed on the server');
+  }
+  return processData.processAvatar;
 }
