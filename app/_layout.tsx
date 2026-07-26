@@ -112,6 +112,13 @@ function AppStack() {
           }}
         />
         <Stack.Screen
+          name="conversation/[id]"
+          options={{
+            title: t.headers.conversation,
+            headerBackTitle: t.common.back,
+          }}
+        />
+        <Stack.Screen
           name="login"
           options={{
             title: t.headers.signIn,

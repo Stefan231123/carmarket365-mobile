@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # The dependency tree has known peer-dep conflicts (Expo/RN); install the
+      # same way local dev does.
+      - run: npm ci --legacy-peer-deps
+      - name: Typecheck
+        run: npm run typecheck
+
+  expo-doctor:
+    name: Expo Doctor (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      # Validates the Expo config, native module versions, and asset setup.
+      # Informational for now — some checks warn on intentional version pins.
+      - name: expo-doctor
+        run: npx --yes expo-doctor || true

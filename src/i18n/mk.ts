@@ -44,6 +44,16 @@ export const mk: MobileTranslations = {
     sell: 'Продај',
     saved: 'Зачувани',
     profile: 'Профил',
+    messages: 'Пораки',
+  },
+  messages: {
+    title: 'Пораки',
+    opener: 'Здраво, дали е сè уште достапно?',
+    empty: 'Сè уште нема разговори. Пишете му на продавач од оглас за да започнете.',
+    typeMessage: 'Напишете порака…',
+    messageSeller: 'Пораки на CarMarket365',
+    you: 'Вие',
+    loginRequired: 'Најавете се за да пишувате на продавачите.',
   },
 
   home: {
@@ -556,6 +566,8 @@ export const mk: MobileTranslations = {
     createAccount: 'Создај профил',
     browseCars: 'Прегледај автомобили',
     sellYourCar: 'Продај автомобил',
+    messages: 'Пораки',
+    conversation: 'Разговор',
   },
 
   languageSelector: {

@@ -44,6 +44,16 @@ export const sq: MobileTranslations = {
     sell: 'Shit',
     saved: 'Ruajtur',
     profile: 'Profili',
+    messages: 'Mesazhet',
+  },
+  messages: {
+    title: 'Mesazhet',
+    opener: 'Përshëndetje, a është akoma i disponueshëm?',
+    empty: 'Ende asnjë bisedë. Shkruaji një shitësi nga një listim për të filluar.',
+    typeMessage: 'Shkruaj një mesazh…',
+    messageSeller: 'Mesazh në CarMarket365',
+    you: 'Ju',
+    loginRequired: 'Hyni për t’u shkruar shitësve.',
   },
 
   home: {
@@ -556,6 +566,8 @@ export const sq: MobileTranslations = {
     createAccount: 'Krijo llogari',
     browseCars: 'Shfleto makina',
     sellYourCar: 'Shit makinën',
+    messages: 'Mesazhet',
+    conversation: 'Bisedë',
   },
 
   languageSelector: {
