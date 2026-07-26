@@ -78,7 +78,9 @@ export function usePushNotifications() {
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
       const data = response.notification.request.content.data;
       // Navigate based on notification data
-      if (data?.action === 'RENEW_LISTING' && data?.carId) {
+      if (data?.type === 'message' && data?.conversationId) {
+        router.push(`/conversation/${data.conversationId}`);
+      } else if (data?.action === 'RENEW_LISTING' && data?.carId) {
         router.push(`/my-listings?renew=${data.carId}`);
       } else if (data?.carId) {
         router.push(`/car/${data.carId}`);
