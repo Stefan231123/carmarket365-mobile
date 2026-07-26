@@ -44,6 +44,16 @@ export const en: MobileTranslations = {
     sell: 'Sell',
     saved: 'Saved',
     profile: 'Profile',
+    messages: 'Messages',
+  },
+  messages: {
+    title: 'Messages',
+    opener: 'Hi, is this still available?',
+    empty: 'No conversations yet. Message a seller from a listing to start one.',
+    typeMessage: 'Type a message…',
+    messageSeller: 'Message on CarMarket365',
+    you: 'You',
+    loginRequired: 'Sign in to message sellers.',
   },
 
   home: {
@@ -556,6 +566,8 @@ export const en: MobileTranslations = {
     createAccount: 'Create Account',
     browseCars: 'Browse Cars',
     sellYourCar: 'Sell Your Car',
+    messages: 'Messages',
+    conversation: 'Conversation',
   },
 
   languageSelector: {

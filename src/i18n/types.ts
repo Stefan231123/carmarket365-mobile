@@ -44,6 +44,16 @@ export interface MobileTranslations {
     sell: string;
     saved: string;
     profile: string;
+    messages: string;
+  };
+  messages: {
+    title: string;
+    opener: string;
+    empty: string;
+    typeMessage: string;
+    messageSeller: string;
+    you: string;
+    loginRequired: string;
   };
 
   home: {
@@ -459,6 +469,8 @@ export interface MobileTranslations {
     createAccount: string;
     browseCars: string;
     sellYourCar: string;
+    messages: string;
+    conversation: string;
   };
 
   languageSelector: {

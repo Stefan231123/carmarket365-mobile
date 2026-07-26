@@ -11,6 +11,8 @@ import { formatPrice, formatMileage, formatEnum, formatEngineSize, translateEnum
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useSavedCarIds, useToggleSave } from '../../src/hooks/useSaveCar';
 import { useLanguage } from '../../src/context/LanguageContext';
+import { useAuth } from '../../src/context/AuthContext';
+import { START_CONVERSATION } from '../../src/graphql/messaging';
 import { LOCALE_MAP } from '../../src/i18n';
 import { CarCard } from '../../src/components/CarCard';
 import { ImageGalleryModal } from '../../src/components/ImageGalleryModal';
@@ -126,6 +128,8 @@ export default function CarDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+  const [startConversation, { loading: startingChat }] = useMutation(START_CONVERSATION);
   const { data, loading, error } = useQuery(GET_CAR, { variables: { id } });
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { savedIds } = useSavedCarIds();
@@ -325,6 +329,24 @@ export default function CarDetailScreen() {
               >
                 <Ionicons name="call" size={18} color={COLORS.white} />
                 <Text style={styles.callButtonText}>{isDealer ? t.carDetail.callDealer : t.carDetail.callSeller}</Text>
+              </Pressable>
+            )}
+            {car.seller?.id !== user?.id && (
+              <Pressable
+                style={styles.messageButton}
+                disabled={startingChat}
+                onPress={async () => {
+                  if (!isAuthenticated) { router.push('/login'); return; }
+                  if (startingChat) return;
+                  try {
+                    const res = await startConversation({ variables: { carId: car.id, content: t.messages.opener } });
+                    const convId = (res.data as { startConversation?: { id: string } } | null | undefined)?.startConversation?.id;
+                    if (convId) router.push(`/conversation/${convId}`);
+                  } catch { /* surfaced by Apollo error link */ }
+                }}
+              >
+                <Ionicons name="chatbubble-outline" size={18} color={COLORS.text} />
+                <Text style={styles.messageButtonText}>{startingChat ? t.common.loading : t.messages.messageSeller}</Text>
               </Pressable>
             )}
             {car.contactEmail && (

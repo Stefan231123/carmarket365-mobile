@@ -2,13 +2,25 @@ import { useState } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
+import { useQuery } from '@apollo/client/react';
 import { COLORS, FONT_SIZE, SPACING, BORDER_RADIUS } from '../../src/constants/theme';
 import { useLanguage } from '../../src/context/LanguageContext';
+import { useAuth } from '../../src/context/AuthContext';
 import { LANGUAGE_OPTIONS } from '../../src/i18n';
+import { GET_UNREAD_MESSAGE_COUNT } from '../../src/graphql/messaging';
 
 export default function TabLayout() {
   const { t, language, setLanguage } = useLanguage();
+  const { isAuthenticated } = useAuth();
   const [langModalVisible, setLangModalVisible] = useState(false);
+
+  // Drive the Messages tab's unread badge.
+  const { data: unreadData } = useQuery<{ getUnreadMessageCount: number }>(GET_UNREAD_MESSAGE_COUNT, {
+    skip: !isAuthenticated,
+    pollInterval: 10000,
+    fetchPolicy: 'cache-and-network',
+  });
+  const unread = unreadData?.getUnreadMessageCount ?? 0;
 
   const currentFlag = LANGUAGE_OPTIONS.find(o => o.code === language)?.flag || '🌐';
 
@@ -87,6 +99,17 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="heart-outline" size={size} color={color} />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name="messages"
+          options={{
+            title: t.tabs.messages,
+            headerTitle: t.headers.messages,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="chatbubbles-outline" size={size} color={color} />
+            ),
+            tabBarBadge: unread > 0 ? (unread > 9 ? '9+' : unread) : undefined,
           }}
         />
         <Tabs.Screen
