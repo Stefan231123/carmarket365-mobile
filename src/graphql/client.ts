@@ -23,6 +23,9 @@ const authLink = setContext(async (_, { headers }) => {
       ...headers,
       authorization: token ? `Bearer ${token}` : '',
       'Content-Type': 'application/json',
+      // Identifies the first-party mobile app so the backend can skip the
+      // web-only reCAPTCHA on login/register.
+      'x-app-client': 'carmarket365-mobile',
     },
   };
 });
