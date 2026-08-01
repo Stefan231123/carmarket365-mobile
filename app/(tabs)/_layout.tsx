@@ -55,9 +55,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: t.tabs.home,
+            title: t.tabs.search,
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home-outline" size={size} color={color} />
+              <Ionicons name="search-outline" size={size} color={color} />
             ),
             headerTitle: () => (
               <View style={styles.headerLogo}>
@@ -72,26 +72,8 @@ export default function TabLayout() {
             ),
           }}
         />
-        <Tabs.Screen
-          name="search"
-          options={{
-            title: t.tabs.search,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="search-outline" size={size} color={color} />
-            ),
-            headerTitle: t.headers.browseCars,
-          }}
-        />
-        <Tabs.Screen
-          name="post"
-          options={{
-            title: t.tabs.sell,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="add-circle-outline" size={28} color={color} />
-            ),
-            headerTitle: t.headers.sellYourCar,
-          }}
-        />
+        {/* Hidden: the search/browse screen is now the first "Browse" tab (index). */}
+        <Tabs.Screen name="search" options={{ href: null }} />
         <Tabs.Screen
           name="saved"
           options={{
@@ -110,6 +92,16 @@ export default function TabLayout() {
               <Ionicons name="chatbubbles-outline" size={size} color={color} />
             ),
             tabBarBadge: unread > 0 ? (unread > 9 ? '9+' : unread) : undefined,
+          }}
+        />
+        <Tabs.Screen
+          name="post"
+          options={{
+            title: t.tabs.sell,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="add-circle-outline" size={28} color={color} />
+            ),
+            headerTitle: t.headers.sellYourCar,
           }}
         />
         <Tabs.Screen
