@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, ScrollView, Pressable, StyleSheet, Alert, ActivityIndicator,
   Image, KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { gql } from '@apollo/client';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { Ionicons } from '@expo/vector-icons';
@@ -76,6 +76,8 @@ interface CarFormData {
 
 export default function PostCarScreen() {
   const router = useRouter();
+  const { quickSale } = useLocalSearchParams<{ quickSale?: string }>();
+  const isExpress = quickSale === '1';
   const { t } = useLanguage();
   const steps = [t.post.stepBasicInfo, t.post.stepDetails, t.post.stepFeatures, t.post.stepPhotosContact];
   const [step, setStep] = useState(0);
@@ -208,6 +210,8 @@ export default function PostCarScreen() {
         acceptsTradeIn: form.acceptsTradeIn,
         allowTestDrive: form.allowTestDrive,
       };
+      // Express Sell: dealer-only quick-sale listing.
+      if (isExpress) input.quickSale = true;
       if (form.variant.trim()) input.variant = form.variant.trim();
       if (form.drivetrain) input.drivetrain = form.drivetrain;
       if (form.engineSize) input.engineSize = parseInt(form.engineSize);
@@ -342,6 +346,13 @@ export default function PostCarScreen() {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      {isExpress && <Stack.Screen options={{ headerTitle: t.express.title }} />}
+      {isExpress && (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: COLORS.primaryLight, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm }}>
+          <Ionicons name="flash" size={16} color={COLORS.primary} />
+          <Text style={{ flex: 1, color: COLORS.primary, fontSize: FONT_SIZE.xs }}>{t.express.banner}</Text>
+        </View>
+      )}
       {/* Progress */}
       <View style={styles.progressContainer}>
         {steps.map((s, i) => (

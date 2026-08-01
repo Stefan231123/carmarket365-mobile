@@ -59,6 +59,8 @@ export const sq: MobileTranslations = {
     resources: 'Burime',
     company: 'Kompania',
     legal: 'Ligjore',
+    dealers: 'Tregtarë të regjistruar',
+    dealersEmpty: 'Ende asnjë tregtar i regjistruar.',
     financing: 'Financimi',
     insurance: 'Sigurimi',
     carReviews: 'Vlerësime makinash',
@@ -74,6 +76,12 @@ export const sq: MobileTranslations = {
     disclaimer: 'Mohim përgjegjësie',
     imprint: 'Impresum',
     accessibility: 'Aksesueshmëria',
+  },
+  express: {
+    title: 'Shitje ekspres',
+    cta: 'Shitje ekspres',
+    subtitle: 'Shitni shpejt — listimi shkon vetëm te tregtarët e verifikuar.',
+    banner: 'Shitje ekspres: listimi juaj do të jetë i dukshëm vetëm për tregtarët e verifikuar për një ofertë të shpejtë.',
   },
 
   home: {
@@ -588,6 +596,7 @@ export const sq: MobileTranslations = {
     sellYourCar: 'Shit makinën',
     messages: 'Mesazhet',
     conversation: 'Bisedë',
+    dealers: 'Tregtarë të regjistruar',
   },
 
   languageSelector: {

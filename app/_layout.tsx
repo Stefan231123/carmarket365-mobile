@@ -126,6 +126,13 @@ function AppStack() {
           }}
         />
         <Stack.Screen
+          name="dealers"
+          options={{
+            title: t.headers.dealers,
+            headerBackTitle: t.common.back,
+          }}
+        />
+        <Stack.Screen
           name="login"
           options={{
             title: t.headers.signIn,

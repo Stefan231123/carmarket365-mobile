@@ -59,6 +59,8 @@ export const en: MobileTranslations = {
     resources: 'Resources',
     company: 'Company',
     legal: 'Legal',
+    dealers: 'Registered Dealers',
+    dealersEmpty: 'No registered dealers yet.',
     financing: 'Financing',
     insurance: 'Insurance',
     carReviews: 'Car Reviews',
@@ -74,6 +76,12 @@ export const en: MobileTranslations = {
     disclaimer: 'Disclaimer',
     imprint: 'Imprint',
     accessibility: 'Accessibility',
+  },
+  express: {
+    title: 'Express Sell',
+    cta: 'Express Sell',
+    subtitle: 'Sell fast — your listing goes only to verified dealers.',
+    banner: 'Express Sell: your listing will be visible only to verified dealers for a quick offer.',
   },
 
   home: {
@@ -588,6 +596,7 @@ export const en: MobileTranslations = {
     sellYourCar: 'Sell Your Car',
     messages: 'Messages',
     conversation: 'Conversation',
+    dealers: 'Registered Dealers',
   },
 
   languageSelector: {

@@ -59,6 +59,8 @@ export interface MobileTranslations {
     resources: string;
     company: string;
     legal: string;
+    dealers: string;
+    dealersEmpty: string;
     financing: string;
     insurance: string;
     carReviews: string;
@@ -74,6 +76,12 @@ export interface MobileTranslations {
     disclaimer: string;
     imprint: string;
     accessibility: string;
+  };
+  express: {
+    title: string;
+    cta: string;
+    subtitle: string;
+    banner: string;
   };
 
   home: {
@@ -491,6 +499,7 @@ export interface MobileTranslations {
     sellYourCar: string;
     messages: string;
     conversation: string;
+    dealers: string;
   };
 
   languageSelector: {

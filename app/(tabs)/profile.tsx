@@ -182,6 +182,7 @@ export default function ProfileScreen() {
 
       <View style={styles.menuCard}>
         <Text style={styles.menuSectionTitle}>{t.more.company}</Text>
+        <MenuItem icon="business-outline" label={t.more.dealers} onPress={() => router.push('/dealers')} />
         <MenuItem icon="information-circle-outline" label={t.more.about} onPress={() => openPage('/about', t.more.about)} />
         <MenuItem icon="help-circle-outline" label={t.more.faq} onPress={() => openPage('/faq', t.more.faq)} />
         <MenuItem icon="headset-outline" label={t.more.help} onPress={() => openPage('/help', t.more.help)} />
