@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/context/AuthContext';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
@@ -24,6 +24,13 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { t, language, setLanguage } = useLanguage();
   const [langModalVisible, setLangModalVisible] = useState(false);
+
+  // Open a website content page inside the in-app browser, in the current language.
+  const openPage = (path: string, title: string) =>
+    router.push({
+      pathname: '/webview',
+      params: { url: `https://www.carmarket365.com${path}?lang=${language}`, title },
+    });
 
   if (!isAuthenticated) {
     return (
@@ -166,10 +173,30 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.menuCard}>
-        <Text style={styles.menuSectionTitle}>{t.profile.support}</Text>
-        <MenuItem icon="help-circle-outline" label={t.profile.helpFaq} onPress={() => Linking.openURL('https://carmarket365.com/help')} />
-        <MenuItem icon="document-text-outline" label={t.profile.termsOfService} onPress={() => Linking.openURL('https://carmarket365.com/terms')} />
-        <MenuItem icon="shield-checkmark-outline" label={t.profile.privacyPolicy} onPress={() => Linking.openURL('https://carmarket365.com/privacy')} />
+        <Text style={styles.menuSectionTitle}>{t.more.resources}</Text>
+        <MenuItem icon="cash-outline" label={t.more.financing} onPress={() => openPage('/financing', t.more.financing)} />
+        <MenuItem icon="shield-outline" label={t.more.insurance} onPress={() => openPage('/insurance', t.more.insurance)} />
+        <MenuItem icon="star-outline" label={t.more.carReviews} onPress={() => openPage('/car-reviews', t.more.carReviews)} />
+        <MenuItem icon="ribbon-outline" label={t.more.safetyTips} onPress={() => openPage('/safety-tips', t.more.safetyTips)} />
+      </View>
+
+      <View style={styles.menuCard}>
+        <Text style={styles.menuSectionTitle}>{t.more.company}</Text>
+        <MenuItem icon="information-circle-outline" label={t.more.about} onPress={() => openPage('/about', t.more.about)} />
+        <MenuItem icon="help-circle-outline" label={t.more.faq} onPress={() => openPage('/faq', t.more.faq)} />
+        <MenuItem icon="headset-outline" label={t.more.help} onPress={() => openPage('/help', t.more.help)} />
+        <MenuItem icon="mail-outline" label={t.more.contact} onPress={() => openPage('/contact', t.more.contact)} />
+        <MenuItem icon="chatbox-ellipses-outline" label={t.more.feedback} onPress={() => openPage('/feedback', t.more.feedback)} />
+      </View>
+
+      <View style={styles.menuCard}>
+        <Text style={styles.menuSectionTitle}>{t.more.legal}</Text>
+        <MenuItem icon="document-text-outline" label={t.more.terms} onPress={() => openPage('/terms-of-service', t.more.terms)} />
+        <MenuItem icon="shield-checkmark-outline" label={t.more.privacy} onPress={() => openPage('/privacy-policy', t.more.privacy)} />
+        <MenuItem icon="hand-left-outline" label={t.more.cookiePolicy} onPress={() => openPage('/cookie-policy', t.more.cookiePolicy)} />
+        <MenuItem icon="alert-circle-outline" label={t.more.disclaimer} onPress={() => openPage('/disclaimer', t.more.disclaimer)} />
+        <MenuItem icon="business-outline" label={t.more.imprint} onPress={() => openPage('/imprint', t.more.imprint)} />
+        <MenuItem icon="accessibility-outline" label={t.more.accessibility} onPress={() => openPage('/accessibility', t.more.accessibility)} />
       </View>
 
       <Pressable style={styles.logoutButton} onPress={logout}>

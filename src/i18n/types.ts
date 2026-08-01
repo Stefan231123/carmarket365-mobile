@@ -55,6 +55,26 @@ export interface MobileTranslations {
     you: string;
     loginRequired: string;
   };
+  more: {
+    resources: string;
+    company: string;
+    legal: string;
+    financing: string;
+    insurance: string;
+    carReviews: string;
+    safetyTips: string;
+    about: string;
+    faq: string;
+    help: string;
+    contact: string;
+    feedback: string;
+    terms: string;
+    privacy: string;
+    cookiePolicy: string;
+    disclaimer: string;
+    imprint: string;
+    accessibility: string;
+  };
 
   home: {
     heroTitle: string;
