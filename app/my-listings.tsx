@@ -27,6 +27,7 @@ const GET_MY_LISTINGS = gql`
       isAvailable
       viewCount
       favoriteCount
+      inquiryCount
       createdAt
       soldAt
       expiresAt
@@ -191,6 +192,14 @@ export default function MyListingsScreen() {
     );
   }
 
+  const stats = {
+    total: listings.length,
+    active: listings.filter((c: any) => c.isAvailable && !c.soldAt).length,
+    views: listings.reduce((s: number, c: any) => s + (c.viewCount || 0), 0),
+    saves: listings.reduce((s: number, c: any) => s + (c.favoriteCount || 0), 0),
+    inquiries: listings.reduce((s: number, c: any) => s + (c.inquiryCount || 0), 0),
+  };
+
   return (
     <FlatList
       data={listings}
@@ -198,6 +207,27 @@ export default function MyListingsScreen() {
       contentContainerStyle={styles.listContent}
       style={styles.list}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
+      ListHeaderComponent={
+        listings.length > 0 ? (
+          <View style={styles.statsCard}>
+            <Text style={styles.statsTitle}>{t.dashboard.title}</Text>
+            <View style={styles.statsGrid}>
+              {[
+                { n: stats.total, l: t.dashboard.listings },
+                { n: stats.active, l: t.dashboard.active },
+                { n: stats.views, l: t.dashboard.views },
+                { n: stats.saves, l: t.dashboard.saves },
+                { n: stats.inquiries, l: t.dashboard.inquiries },
+              ].map((s) => (
+                <View key={s.l} style={styles.statBox}>
+                  <Text style={styles.statNum}>{s.n}</Text>
+                  <Text style={styles.statLabel}>{s.l}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        ) : null
+      }
       renderItem={({ item }) => {
         const imageUrl = getMainImage(item.images);
         const isSold = !item.isAvailable || !!item.soldAt;
@@ -303,6 +333,12 @@ export default function MyListingsScreen() {
 
 const styles = StyleSheet.create({
   list: { flex: 1, backgroundColor: COLORS.backgroundMuted },
+  statsCard: { backgroundColor: COLORS.white, borderRadius: BORDER_RADIUS.lg, borderWidth: 1, borderColor: COLORS.borderZinc, padding: SPACING.md, marginBottom: SPACING.md },
+  statsTitle: { fontSize: FONT_SIZE.sm, fontWeight: '700', color: COLORS.textSecondary, marginBottom: SPACING.sm, textTransform: 'uppercase', letterSpacing: 0.5 },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  statBox: { width: '20%', alignItems: 'center', paddingVertical: SPACING.xs },
+  statNum: { fontSize: FONT_SIZE.lg, fontWeight: '800', color: COLORS.text },
+  statLabel: { fontSize: 10, color: COLORS.textMuted, marginTop: 2, textAlign: 'center' },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: SPACING.xxl, gap: SPACING.sm },
   listContent: { padding: SPACING.md, paddingBottom: SPACING.xxl },
   card: {

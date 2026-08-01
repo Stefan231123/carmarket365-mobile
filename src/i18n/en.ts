@@ -83,6 +83,16 @@ export const en: MobileTranslations = {
     subtitle: 'Sell fast — your listing goes only to verified dealers.',
     banner: 'Express Sell: your listing will be visible only to verified dealers for a quick offer.',
   },
+  dashboard: {
+    title: 'Your Stats',
+    listings: 'Listings',
+    active: 'Active',
+    views: 'Views',
+    saves: 'Saves',
+    inquiries: 'Inquiries',
+    opportunities: 'Express Sale Opportunities',
+    opportunitiesEmpty: 'No express-sale opportunities right now.',
+  },
 
   home: {
     heroTitle: 'Find Your Perfect Car',
@@ -597,6 +607,7 @@ export const en: MobileTranslations = {
     messages: 'Messages',
     conversation: 'Conversation',
     dealers: 'Registered Dealers',
+    opportunities: 'Express Sale Opportunities',
   },
 
   languageSelector: {

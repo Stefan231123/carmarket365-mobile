@@ -133,6 +133,13 @@ function AppStack() {
           }}
         />
         <Stack.Screen
+          name="express-opportunities"
+          options={{
+            title: t.headers.opportunities,
+            headerBackTitle: t.common.back,
+          }}
+        />
+        <Stack.Screen
           name="login"
           options={{
             title: t.headers.signIn,

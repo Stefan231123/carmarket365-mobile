@@ -83,6 +83,16 @@ export interface MobileTranslations {
     subtitle: string;
     banner: string;
   };
+  dashboard: {
+    title: string;
+    listings: string;
+    active: string;
+    views: string;
+    saves: string;
+    inquiries: string;
+    opportunities: string;
+    opportunitiesEmpty: string;
+  };
 
   home: {
     heroTitle: string;
@@ -500,6 +510,7 @@ export interface MobileTranslations {
     messages: string;
     conversation: string;
     dealers: string;
+    opportunities: string;
   };
 
   languageSelector: {

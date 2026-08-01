@@ -83,6 +83,16 @@ export const mk: MobileTranslations = {
     subtitle: 'Продадете брзо — огласот оди само до верификувани продавачи.',
     banner: 'Експресна продажба: вашиот оглас ќе биде видлив само за верификувани продавачи за брза понуда.',
   },
+  dashboard: {
+    title: 'Ваша статистика',
+    listings: 'Огласи',
+    active: 'Активни',
+    views: 'Прегледи',
+    saves: 'Зачувувања',
+    inquiries: 'Барања',
+    opportunities: 'Можности за експресна продажба',
+    opportunitiesEmpty: 'Моментално нема можности за експресна продажба.',
+  },
 
   home: {
     heroTitle: 'Најди го својот идеален автомобил',
@@ -597,6 +607,7 @@ export const mk: MobileTranslations = {
     messages: 'Пораки',
     conversation: 'Разговор',
     dealers: 'Регистрирани продавачи',
+    opportunities: 'Можности за експресна продажба',
   },
 
   languageSelector: {

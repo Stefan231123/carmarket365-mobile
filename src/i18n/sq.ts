@@ -83,6 +83,16 @@ export const sq: MobileTranslations = {
     subtitle: 'Shitni shpejt — listimi shkon vetëm te tregtarët e verifikuar.',
     banner: 'Shitje ekspres: listimi juaj do të jetë i dukshëm vetëm për tregtarët e verifikuar për një ofertë të shpejtë.',
   },
+  dashboard: {
+    title: 'Statistikat tuaja',
+    listings: 'Listime',
+    active: 'Aktive',
+    views: 'Shikime',
+    saves: 'Ruajtje',
+    inquiries: 'Kërkesa',
+    opportunities: 'Mundësi shitjeje ekspres',
+    opportunitiesEmpty: 'Asnjë mundësi shitjeje ekspres për momentin.',
+  },
 
   home: {
     heroTitle: 'Gjeni Makinën Tuaj të Përsosur',
@@ -597,6 +607,7 @@ export const sq: MobileTranslations = {
     messages: 'Mesazhet',
     conversation: 'Bisedë',
     dealers: 'Tregtarë të regjistruar',
+    opportunities: 'Mundësi shitjeje ekspres',
   },
 
   languageSelector: {
