@@ -119,6 +119,13 @@ function AppStack() {
           }}
         />
         <Stack.Screen
+          name="webview"
+          options={{
+            title: 'CarMarket365',
+            headerBackTitle: t.common.back,
+          }}
+        />
+        <Stack.Screen
           name="login"
           options={{
             title: t.headers.signIn,
