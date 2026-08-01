@@ -59,6 +59,8 @@ export const mk: MobileTranslations = {
     resources: 'Ресурси',
     company: 'Компанија',
     legal: 'Правни информации',
+    dealers: 'Регистрирани продавачи',
+    dealersEmpty: 'Сè уште нема регистрирани продавачи.',
     financing: 'Финансирање',
     insurance: 'Осигурување',
     carReviews: 'Рецензии на автомобили',
@@ -74,6 +76,12 @@ export const mk: MobileTranslations = {
     disclaimer: 'Одрекување од одговорност',
     imprint: 'Импресум',
     accessibility: 'Пристапност',
+  },
+  express: {
+    title: 'Експресна продажба',
+    cta: 'Експресна продажба',
+    subtitle: 'Продадете брзо — огласот оди само до верификувани продавачи.',
+    banner: 'Експресна продажба: вашиот оглас ќе биде видлив само за верификувани продавачи за брза понуда.',
   },
 
   home: {
@@ -588,6 +596,7 @@ export const mk: MobileTranslations = {
     sellYourCar: 'Продај автомобил',
     messages: 'Пораки',
     conversation: 'Разговор',
+    dealers: 'Регистрирани продавачи',
   },
 
   languageSelector: {

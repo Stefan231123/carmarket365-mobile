@@ -36,6 +36,11 @@ export default function PostScreen() {
         <Ionicons name="add" size={18} color={COLORS.white} />
         <Text style={styles.buttonText}>{t.post.createListing}</Text>
       </Pressable>
+      <Pressable style={styles.expressButton} onPress={() => router.push('/post-car?quickSale=1')}>
+        <Ionicons name="flash" size={18} color={COLORS.primary} />
+        <Text style={styles.expressButtonText}>{t.express.cta}</Text>
+      </Pressable>
+      <Text style={styles.expressHint}>{t.express.subtitle}</Text>
     </View>
   );
 }
@@ -83,5 +88,28 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: FONT_SIZE.sm,
     fontWeight: '500',
+  },
+  expressButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.full,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    height: 48,
+    paddingHorizontal: SPACING.xl,
+    justifyContent: 'center',
+  },
+  expressButtonText: {
+    color: COLORS.primary,
+    fontSize: FONT_SIZE.sm,
+    fontWeight: '600',
+  },
+  expressHint: {
+    fontSize: FONT_SIZE.xs,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    maxWidth: 260,
   },
 });
