@@ -163,6 +163,9 @@ export default function ProfileScreen() {
         <Text style={styles.menuSectionTitle}>{t.profile.listings}</Text>
         <MenuItem icon="car-outline" label={t.profile.myListings} onPress={() => router.push('/my-listings')} />
         <MenuItem icon="heart-outline" label={t.profile.savedCars} onPress={() => router.push('/(tabs)/saved')} />
+        {(user?.role === 'DEALER' || user?.role === 'ADMIN') && (
+          <MenuItem icon="flash-outline" label={t.dashboard.opportunities} onPress={() => router.push('/express-opportunities')} />
+        )}
       </View>
 
       <View style={styles.menuCard}>
