@@ -61,7 +61,6 @@ export default function TabLayout() {
             ),
             headerTitle: () => (
               <View style={styles.headerLogo}>
-                <Ionicons name="car-sport" size={24} color={COLORS.white} />
                 <Text style={styles.headerLogoText}>CarMarket365</Text>
               </View>
             ),

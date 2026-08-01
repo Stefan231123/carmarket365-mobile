@@ -11,7 +11,7 @@ export default {
     splash: {
       image: './assets/splash-icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#000000',
+      backgroundColor: '#ffffff',
     },
     ios: {
       supportsTablet: true,
@@ -76,7 +76,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#000000',
+        backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
       package: 'com.carmarket365.mobile',
