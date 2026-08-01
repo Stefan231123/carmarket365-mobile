@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Animated, Image } from 'react-native';
 import { useLanguage } from '../context/LanguageContext';
 
 export function SplashScreen() {
@@ -32,9 +31,7 @@ export function SplashScreen() {
           { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
         ]}
       >
-        <View style={styles.iconCircle}>
-          <Ionicons name="car-sport" size={48} color="#ffffff" />
-        </View>
+        <Image source={require('../../assets/cm-logo.png')} style={styles.logo} resizeMode="contain" />
         <Text style={styles.title}>CarMarket365</Text>
         <Text style={styles.subtitle}>{t.common.splashTagline}</Text>
       </Animated.View>
@@ -53,32 +50,27 @@ export function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
   },
   logoContainer: {
     alignItems: 'center',
-    gap: 16,
+    gap: 12,
   },
-  iconCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
+  logo: {
+    width: 132,
+    height: 132,
   },
   title: {
     fontSize: 32,
     fontWeight: '800',
-    color: '#ffffff',
+    color: '#000000',
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.6)',
+    color: 'rgba(0,0,0,0.5)',
     fontWeight: '400',
   },
   footer: {
@@ -93,10 +85,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   dotActive: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000000',
     width: 20,
   },
 });

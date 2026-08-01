@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform, Alert, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../src/context/AuthContext';
@@ -91,7 +91,7 @@ export default function LoginScreen() {
         {/* Logo */}
         <View style={styles.logoSection}>
           <View style={styles.logoRow}>
-            <Ionicons name="car-sport" size={24} color={COLORS.primary} />
+            <Image source={require('../assets/cm-logo.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
             <Text style={styles.logoText}>CarMarket365</Text>
           </View>
         </View>
