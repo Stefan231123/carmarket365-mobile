@@ -333,7 +333,7 @@ export default function CarDetailScreen() {
             )}
             {car.seller?.id !== user?.id && (
               <Pressable
-                style={styles.messageButton}
+                style={styles.messagePrimaryButton}
                 disabled={startingChat}
                 onPress={async () => {
                   if (!isAuthenticated) { router.push('/login'); return; }
@@ -345,8 +345,8 @@ export default function CarDetailScreen() {
                   } catch { /* surfaced by Apollo error link */ }
                 }}
               >
-                <Ionicons name="chatbubble-outline" size={18} color={COLORS.text} />
-                <Text style={styles.messageButtonText}>{startingChat ? t.common.loading : t.messages.messageSeller}</Text>
+                <Ionicons name="chatbubble-ellipses" size={18} color={COLORS.white} />
+                <Text style={styles.messagePrimaryButtonText}>{startingChat ? t.common.loading : t.messages.messageSeller}</Text>
               </Pressable>
             )}
             {car.contactEmail && (
@@ -355,7 +355,7 @@ export default function CarDetailScreen() {
                 onPress={() => car.contactEmail && Linking.openURL(`mailto:${car.contactEmail}`)}
               >
                 <Ionicons name="mail-outline" size={18} color={COLORS.text} />
-                <Text style={styles.messageButtonText}>{t.carDetail.sendMessage}</Text>
+                <Text style={styles.messageButtonText}>{t.carDetail.emailSeller}</Text>
               </Pressable>
             )}
           </View>
@@ -744,6 +744,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   callButtonText: { color: COLORS.white, fontSize: FONT_SIZE.md, fontWeight: '500' },
+  messagePrimaryButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: BORDER_RADIUS.full,
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  messagePrimaryButtonText: { color: COLORS.white, fontSize: FONT_SIZE.md, fontWeight: '700' },
   messageButton: {
     backgroundColor: COLORS.white,
     borderRadius: BORDER_RADIUS.full,

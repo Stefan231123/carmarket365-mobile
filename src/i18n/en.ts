@@ -197,6 +197,7 @@ export const en: MobileTranslations = {
     callSeller: 'Call Seller',
     callDealer: 'Call Dealer',
     sendMessage: 'Send Message',
+    emailSeller: 'Send Email',
     overview: 'Overview',
     features: 'Features',
     history: 'History',

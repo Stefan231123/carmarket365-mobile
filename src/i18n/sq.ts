@@ -197,6 +197,7 @@ export const sq: MobileTranslations = {
     callSeller: 'Thirr shitësin',
     callDealer: 'Thirr dilerin',
     sendMessage: 'Dërgo mesazh',
+    emailSeller: 'Dërgo email',
     overview: 'Përmbledhje',
     features: 'Pajisjet',
     history: 'Historia',
