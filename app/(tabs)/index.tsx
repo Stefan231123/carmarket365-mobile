@@ -588,7 +588,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: COLORS.backgroundMuted,
+    backgroundColor: COLORS.white,
   },
   scrollContent: {
     paddingBottom: SPACING.xxl,
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.backgroundMuted,
+    backgroundColor: COLORS.white,
   },
 
   // Hero

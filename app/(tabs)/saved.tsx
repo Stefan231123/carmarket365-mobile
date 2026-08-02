@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.backgroundMuted,
+    backgroundColor: COLORS.white,
     padding: SPACING.lg,
     gap: SPACING.md,
   },
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    backgroundColor: COLORS.backgroundMuted,
+    backgroundColor: COLORS.white,
   },
   header: {
     paddingHorizontal: SPACING.md,
