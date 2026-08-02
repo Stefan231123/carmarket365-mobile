@@ -64,8 +64,7 @@ const USER_FIELDS = `
 const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $password: String!) {
     login(input: { email: $email, password: $password }) {
-      accessToken
-      refreshToken
+      access_token
       user { ${USER_FIELDS} }
     }
   }
@@ -74,8 +73,7 @@ const LOGIN_MUTATION = gql`
 const REGISTER_MUTATION = gql`
   mutation Register($email: String!, $password: String!, $name: String, $dealerName: String, $dealerAddress: String, $dealerCity: String, $dealerPhoneNumber: String) {
     register(input: { email: $email, password: $password, name: $name, dealerName: $dealerName, dealerAddress: $dealerAddress, dealerCity: $dealerCity, dealerPhoneNumber: $dealerPhoneNumber }) {
-      accessToken
-      refreshToken
+      access_token
       user { ${USER_FIELDS} }
     }
   }
@@ -84,8 +82,7 @@ const REGISTER_MUTATION = gql`
 const SOCIAL_LOGIN_MUTATION = gql`
   mutation SocialLogin($provider: String!, $token: String!, $email: String!, $name: String) {
     socialLogin(provider: $provider, token: $token, email: $email, name: $name) {
-      accessToken
-      refreshToken
+      access_token
       user { ${USER_FIELDS} }
     }
   }
@@ -112,8 +109,7 @@ const LOGOUT_MUTATION = gql`
 const REFRESH_TOKEN_MUTATION = gql`
   mutation RefreshToken($refreshToken: String!) {
     refreshToken(refreshToken: $refreshToken) {
-      accessToken
-      refreshToken
+      access_token
       user { ${USER_FIELDS} }
     }
   }
@@ -223,8 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const result = (data as any)?.login;
     if (result) {
-      await SecureStore.setItemAsync('accessToken', result.accessToken);
-      if (result.refreshToken) await SecureStore.setItemAsync('refreshToken', result.refreshToken);
+      await SecureStore.setItemAsync('accessToken', result.access_token);
       if (result.user?.id) await SecureStore.setItemAsync('userId', result.user.id);
       setUser(result.user);
     }
@@ -250,8 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const result = (data as any)?.register;
     if (result) {
-      await SecureStore.setItemAsync('accessToken', result.accessToken);
-      if (result.refreshToken) await SecureStore.setItemAsync('refreshToken', result.refreshToken);
+      await SecureStore.setItemAsync('accessToken', result.access_token);
       if (result.user?.id) await SecureStore.setItemAsync('userId', result.user.id);
       setUser(result.user);
     }
@@ -269,8 +263,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const result = (data as any)?.socialLogin;
     if (result) {
-      await SecureStore.setItemAsync('accessToken', result.accessToken);
-      if (result.refreshToken) await SecureStore.setItemAsync('refreshToken', result.refreshToken);
+      await SecureStore.setItemAsync('accessToken', result.access_token);
       if (result.user?.id) await SecureStore.setItemAsync('userId', result.user.id);
       setUser(result.user);
     }
