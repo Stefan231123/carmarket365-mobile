@@ -201,6 +201,7 @@ export interface MobileTranslations {
     callSeller: string;
     callDealer: string;
     sendMessage: string;
+    emailSeller: string;
     overview: string;
     features: string;
     history: string;

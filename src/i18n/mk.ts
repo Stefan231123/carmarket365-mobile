@@ -197,6 +197,7 @@ export const mk: MobileTranslations = {
     callSeller: 'Повикај продавач',
     callDealer: 'Повикај дилер',
     sendMessage: 'Испрати порака',
+    emailSeller: 'Испрати е-пошта',
     overview: 'Преглед',
     features: 'Опрема',
     history: 'Историја',
