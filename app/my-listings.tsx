@@ -332,7 +332,7 @@ export default function MyListingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: COLORS.backgroundMuted },
+  list: { flex: 1, backgroundColor: COLORS.white },
   statsCard: { backgroundColor: COLORS.white, borderRadius: BORDER_RADIUS.lg, borderWidth: 1, borderColor: COLORS.borderZinc, padding: SPACING.md, marginBottom: SPACING.md },
   statsTitle: { fontSize: FONT_SIZE.sm, fontWeight: '700', color: COLORS.textSecondary, marginBottom: SPACING.sm, textTransform: 'uppercase', letterSpacing: 0.5 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap' },

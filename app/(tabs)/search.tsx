@@ -1007,7 +1007,7 @@ export default function SearchScreen() {
 // ── Styles ────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.backgroundMuted },
+  container: { flex: 1, backgroundColor: COLORS.white },
   flex1: { flex: 1 },
 
   // Search bar

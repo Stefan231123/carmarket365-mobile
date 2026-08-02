@@ -69,7 +69,7 @@ export default function ExpressOpportunitiesScreen() {
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: COLORS.backgroundMuted },
+  list: { flex: 1, backgroundColor: COLORS.white },
   content: { padding: SPACING.md, gap: SPACING.md },
   grow: { flexGrow: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.xl, gap: SPACING.md, minHeight: 300 },
