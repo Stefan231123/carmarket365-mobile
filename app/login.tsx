@@ -42,9 +42,10 @@ export default function LoginScreen() {
       await login(email.trim().toLowerCase(), password);
       router.back();
     } catch (err: any) {
-      const message = err?.message?.includes('Invalid credentials')
+      const raw = (err?.message || '').replace(/^.*?:\s*/, '').trim();
+      const message = raw.includes('Invalid credentials')
         ? t.auth.invalidCredentials
-        : t.auth.somethingWentWrong;
+        : (raw || t.auth.somethingWentWrong);
       Alert.alert(t.auth.loginFailed, message);
     } finally {
       setLoading(false);
