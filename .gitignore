@@ -44,3 +44,7 @@ eas-credentials/
 # generated native folders
 /ios
 /android
+
+# Store submission secrets (Google Play service account, etc.)
+credentials/
+google-play-service-account.json
