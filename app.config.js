@@ -15,7 +15,7 @@ export default {
     },
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.carmarket365.mobile',
+      bundleIdentifier: 'com.carmarket.app',
       associatedDomains: [
         'applinks:carmarket365.com',
         'applinks:www.carmarket365.com',
@@ -79,7 +79,7 @@ export default {
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
-      package: 'com.carmarket365.mobile',
+      package: 'com.carmarket.app',
       intentFilters: [
         {
           action: 'VIEW',

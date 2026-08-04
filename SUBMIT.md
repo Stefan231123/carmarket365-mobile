@@ -6,7 +6,7 @@ Builds are produced with `eas build` (see `eas.json`). This doc covers **submitt
 
 **Prerequisites**
 1. **Google Play Console** account ($25 one-time) → https://play.google.com/console
-2. Create the app in Play Console (package `com.carmarket365.mobile`), and complete the required store listing + Data safety form.
+2. Create the app in Play Console (package `com.carmarket.app`), and complete the required store listing + Data safety form.
 3. Create a **service account** for automated uploads:
    - Play Console → *Setup → API access* → link a Google Cloud project → create a service account → grant it "Release" permissions.
    - Download its **JSON key** and save it to `credentials/google-play-service-account.json` (this folder is git-ignored — never commit it).
@@ -21,7 +21,7 @@ Change `track` in `eas.json` (`internal` → `production`) when ready for a full
 
 **Prerequisites**
 1. **Apple Developer Program** membership ($99/yr) → https://developer.apple.com/programs
-2. Create the app record in **App Store Connect** (bundle id `com.carmarket365.mobile`).
+2. Create the app record in **App Store Connect** (bundle id `com.carmarket.app`).
 3. Build iOS first: `npx eas-cli@latest build --platform ios --profile production` (EAS creates the signing credentials — needs the Apple account).
 
 **Submit** (interactive — prompts for your Apple ID / App Store Connect):
