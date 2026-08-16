@@ -16,6 +16,15 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.carmarket.app',
+      // Google Sign-In (iOS) callback: set EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME to the
+      // reversed iOS client ID (com.googleusercontent.apps.XXXX) from Google Cloud.
+      infoPlist: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME
+        ? {
+            CFBundleURLTypes: [
+              { CFBundleURLSchemes: [process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME] },
+            ],
+          }
+        : undefined,
       associatedDomains: [
         'applinks:carmarket365.com',
         'applinks:www.carmarket365.com',
