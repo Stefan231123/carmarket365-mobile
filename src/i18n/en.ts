@@ -54,6 +54,9 @@ export const en: MobileTranslations = {
     messageSeller: 'Message on CarMarket365',
     you: 'You',
     loginRequired: 'Sign in to message sellers.',
+    newMessage: 'New Message',
+    send: 'Send',
+    to: 'To:',
   },
   more: {
     resources: 'Resources',
