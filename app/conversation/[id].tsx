@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, FlatList, StyleSheet, TextInput, Pressable, ActivityIndicator,
-  KeyboardAvoidingView, Platform,
+  KeyboardAvoidingView, Platform, Image,
 } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { useLanguage } from '../../src/context/LanguageContext';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
+import { formatPrice } from '../../src/utils/formatters';
 import {
   GET_CONVERSATION, SEND_MESSAGE, MARK_CONVERSATION_READ, MConversation, MMessage, MParticipant,
 } from '../../src/graphql/messaging';
@@ -25,6 +26,7 @@ export default function ConversationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const { t } = useLanguage();
+  const router = useRouter();
   const [draft, setDraft] = useState('');
   const listRef = useRef<FlatList>(null);
 
@@ -71,6 +73,22 @@ export default function ConversationScreen() {
       keyboardVerticalOffset={90}
     >
       <Stack.Screen options={{ title: other?.name || t.headers.conversation }} />
+      {conv?.car && (
+        <Pressable style={styles.carCard} onPress={() => router.push(`/car/${conv.car!.id}`)}>
+          {conv.car.images?.[0] && (
+            <Image source={{ uri: conv.car.images[0].thumbnailUrl || conv.car.images[0].url }} style={styles.carCardImage} />
+          )}
+          <View style={styles.carCardBody}>
+            <Text style={styles.carCardTitle} numberOfLines={1}>
+              {conv.car.year} {conv.car.make} {conv.car.model}
+            </Text>
+            {typeof conv.car.price === 'number' && (
+              <Text style={styles.carCardPrice}>{formatPrice(conv.car.price)}</Text>
+            )}
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={COLORS.textMuted} />
+        </Pressable>
+      )}
       {loading && !conv ? (
         <View style={styles.center}><ActivityIndicator color={COLORS.primary} /></View>
       ) : (
@@ -114,6 +132,15 @@ export default function ConversationScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.background },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  carCard: {
+    flexDirection: 'row', alignItems: 'center', gap: SPACING.sm,
+    paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm,
+    backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.borderZinc,
+  },
+  carCardImage: { width: 44, height: 44, borderRadius: BORDER_RADIUS.md, backgroundColor: COLORS.zinc100 },
+  carCardBody: { flex: 1, gap: 1 },
+  carCardTitle: { fontSize: FONT_SIZE.sm, fontWeight: '600', color: COLORS.text },
+  carCardPrice: { fontSize: FONT_SIZE.xs, color: COLORS.textSecondary },
   listContent: { padding: SPACING.md, gap: 6 },
   bubbleRow: { flexDirection: 'row' },
   rowMine: { justifyContent: 'flex-end' },
