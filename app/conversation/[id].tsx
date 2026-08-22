@@ -74,20 +74,26 @@ export default function ConversationScreen() {
     >
       <Stack.Screen options={{ title: other?.name || t.headers.conversation }} />
       {conv?.car && (
-        <Pressable style={styles.carCard} onPress={() => router.push(`/car/${conv.car!.id}`)}>
-          {conv.car.images?.[0] && (
-            <Image source={{ uri: conv.car.images[0].thumbnailUrl || conv.car.images[0].url }} style={styles.carCardImage} />
-          )}
-          <View style={styles.carCardBody}>
-            <Text style={styles.carCardTitle} numberOfLines={1}>
-              {conv.car.year} {conv.car.make} {conv.car.model}
-            </Text>
-            {typeof conv.car.price === 'number' && (
-              <Text style={styles.carCardPrice}>{formatPrice(conv.car.price)}</Text>
+        <View style={styles.carCardWrap}>
+          <Pressable style={styles.carCard} onPress={() => router.push(`/car/${conv.car!.id}`)}>
+            {conv.car.images?.[0] ? (
+              <Image source={{ uri: conv.car.images[0].thumbnailUrl || conv.car.images[0].url }} style={styles.carCardImage} />
+            ) : (
+              <View style={styles.carCardImageFallback}>
+                <Ionicons name="car-outline" size={22} color={COLORS.textMuted} />
+              </View>
             )}
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={COLORS.textMuted} />
-        </Pressable>
+            <View style={styles.carCardBody}>
+              <Text style={styles.carCardTitle} numberOfLines={1}>
+                {conv.car.year} {conv.car.make} {conv.car.model}
+              </Text>
+              {typeof conv.car.price === 'number' && (
+                <Text style={styles.carCardPrice}>{formatPrice(conv.car.price)}</Text>
+              )}
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={COLORS.textMuted} />
+          </Pressable>
+        </View>
       )}
       {loading && !conv ? (
         <View style={styles.center}><ActivityIndicator color={COLORS.primary} /></View>
@@ -132,15 +138,18 @@ export default function ConversationScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: COLORS.background },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  carCardWrap: { paddingHorizontal: SPACING.md, paddingTop: SPACING.md, paddingBottom: SPACING.xs, backgroundColor: COLORS.background },
   carCard: {
     flexDirection: 'row', alignItems: 'center', gap: SPACING.sm,
-    paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm,
-    backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.borderZinc,
+    padding: SPACING.sm, borderRadius: BORDER_RADIUS.lg,
+    backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.borderZinc,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1,
   },
-  carCardImage: { width: 44, height: 44, borderRadius: BORDER_RADIUS.md, backgroundColor: COLORS.zinc100 },
+  carCardImage: { width: 48, height: 48, borderRadius: BORDER_RADIUS.md, backgroundColor: COLORS.zinc100 },
+  carCardImageFallback: { width: 48, height: 48, borderRadius: BORDER_RADIUS.md, backgroundColor: COLORS.zinc100, alignItems: 'center', justifyContent: 'center' },
   carCardBody: { flex: 1, gap: 1 },
-  carCardTitle: { fontSize: FONT_SIZE.sm, fontWeight: '600', color: COLORS.text },
-  carCardPrice: { fontSize: FONT_SIZE.xs, color: COLORS.textSecondary },
+  carCardTitle: { fontSize: FONT_SIZE.sm, fontWeight: '700', color: COLORS.text },
+  carCardPrice: { fontSize: FONT_SIZE.xs, color: COLORS.primary, fontWeight: '600' },
   listContent: { padding: SPACING.md, gap: 6 },
   bubbleRow: { flexDirection: 'row' },
   rowMine: { justifyContent: 'flex-end' },
