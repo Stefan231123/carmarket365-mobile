@@ -54,6 +54,9 @@ export interface MobileTranslations {
     messageSeller: string;
     you: string;
     loginRequired: string;
+    newMessage: string;
+    send: string;
+    to: string;
   };
   more: {
     resources: string;

@@ -54,6 +54,9 @@ export const mk: MobileTranslations = {
     messageSeller: 'Пораки на CarMarket365',
     you: 'Вие',
     loginRequired: 'Најавете се за да пишувате на продавачите.',
+    newMessage: 'Нова порака',
+    send: 'Испрати',
+    to: 'До:',
   },
   more: {
     resources: 'Ресурси',

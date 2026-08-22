@@ -54,6 +54,9 @@ export const sq: MobileTranslations = {
     messageSeller: 'Mesazh në CarMarket365',
     you: 'Ju',
     loginRequired: 'Hyni për t’u shkruar shitësve.',
+    newMessage: 'Mesazh i ri',
+    send: 'Dërgo',
+    to: 'Për:',
   },
   more: {
     resources: 'Burime',
