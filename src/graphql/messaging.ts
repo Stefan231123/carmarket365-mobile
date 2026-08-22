@@ -4,6 +4,7 @@ import { gql } from '@apollo/client';
 
 const PARTICIPANT = `id name avatarUrl`;
 const MESSAGE = `id content createdAt sender { ${PARTICIPANT} }`;
+const CONVERSATION_CAR = `car { id make model year price images { thumbnailUrl url } }`;
 
 export const GET_MY_CONVERSATIONS = gql`
   query GetMyConversations {
@@ -11,7 +12,7 @@ export const GET_MY_CONVERSATIONS = gql`
       id
       unreadCount
       lastMessageAt
-      car { id make model year }
+      ${CONVERSATION_CAR}
       buyer { ${PARTICIPANT} }
       seller { ${PARTICIPANT} }
     }
@@ -23,7 +24,7 @@ export const GET_CONVERSATION = gql`
     getConversation(id: $id) {
       id
       unreadCount
-      car { id make model year }
+      ${CONVERSATION_CAR}
       buyer { ${PARTICIPANT} }
       seller { ${PARTICIPANT} }
       messages { ${MESSAGE} }
@@ -74,7 +75,14 @@ export interface MConversation {
   id: string;
   unreadCount: number;
   lastMessageAt?: string;
-  car?: { id: string; make: string; model: string; year: number } | null;
+  car?: {
+    id: string;
+    make: string;
+    model: string;
+    year: number;
+    price?: number | null;
+    images?: { thumbnailUrl?: string | null; url: string }[] | null;
+  } | null;
   buyer: MParticipant;
   seller: MParticipant;
   messages?: MMessage[];
