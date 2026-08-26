@@ -1,74 +1,50 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Alert } from 'react-native';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import { GoogleSignin, isSuccessResponse, isErrorWithCode, statusCodes } from '@react-native-google-signin/google-signin';
 import { useAuth } from '../context/AuthContext';
 
-// Complete any pending auth sessions on app load
-WebBrowser.maybeCompleteAuthSession();
+const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
 
-// Google OAuth Client IDs — read from env vars, fall back to web client ID
-const GOOGLE_CONFIG = {
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '',
-  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '',
-  androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || '',
-};
+GoogleSignin.configure({ webClientId });
 
 export function useGoogleAuth() {
   const { socialLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: GOOGLE_CONFIG.webClientId,
-    iosClientId: GOOGLE_CONFIG.iosClientId,
-    androidClientId: GOOGLE_CONFIG.androidClientId,
-  });
+  useEffect(() => {
+    GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true })
+      .then(() => setIsReady(true))
+      .catch(() => setIsReady(true)); // still let the user try; signIn() will surface the real error
+  }, []);
 
-  const handleGoogleResponse = useCallback(async () => {
-    if (response?.type !== 'success') return;
-
+  const promptAsync = useCallback(async () => {
+    if (isLoading) return;
     setIsLoading(true);
     try {
-      const { authentication } = response;
+      const response = await GoogleSignin.signIn();
+      if (!isSuccessResponse(response)) return; // user cancelled
 
-      // Only send ID tokens to the backend — access tokens cannot be verified server-side
-      if (!authentication?.idToken) {
+      const { idToken, user } = response.data;
+      if (!idToken) {
         Alert.alert('Error', 'Google sign-in did not return an ID token. Please try again.');
         return;
       }
 
-      // Fetch user info from Google for display name / email
-      const userInfoResponse = await fetch(
-        'https://www.googleapis.com/userinfo/v2/me',
-        { headers: { Authorization: `Bearer ${authentication.accessToken}` } },
-      );
-      const userInfo = await userInfoResponse.json();
-
-      await socialLogin(
-        'google',
-        authentication.idToken,
-        userInfo.email,
-        userInfo.name,
-      );
+      await socialLogin('google', idToken, user.email, user.name ?? undefined);
     } catch (err: any) {
-      const message = err?.message?.includes('credentials')
-        ? 'Google sign-in failed. Please try again.'
-        : 'Something went wrong during sign-in. Please try again.';
+      const message = isErrorWithCode(err) && err.code === statusCodes.IN_PROGRESS
+        ? 'Sign-in is already in progress.'
+        : 'Google sign-in failed. Please try again.';
       Alert.alert('Error', message);
     } finally {
       setIsLoading(false);
     }
-  }, [response, socialLogin]);
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      handleGoogleResponse();
-    }
-  }, [response, handleGoogleResponse]);
+  }, [isLoading, socialLogin]);
 
   return {
     promptAsync,
     isLoading,
-    isReady: !!request,
+    isReady,
   };
 }

@@ -16,15 +16,6 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.carmarket.app',
-      // Google Sign-In (iOS) callback: set EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME to the
-      // reversed iOS client ID (com.googleusercontent.apps.XXXX) from Google Cloud.
-      infoPlist: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME
-        ? {
-            CFBundleURLTypes: [
-              { CFBundleURLSchemes: [process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME] },
-            ],
-          }
-        : undefined,
       associatedDomains: [
         'applinks:carmarket365.com',
         'applinks:www.carmarket365.com',
@@ -141,6 +132,15 @@ export default {
             'Allow CarMarket365 to access your photos to add images to your car listing.',
           cameraPermission:
             'Allow CarMarket365 to use your camera to take photos of your car.',
+        },
+      ],
+      [
+        '@react-native-google-signin/google-signin',
+        {
+          // Reversed iOS client ID (com.googleusercontent.apps.XXXX) from Google Cloud.
+          // The plugin requires a non-empty value even when only building Android;
+          // falls back to a placeholder until a real iOS OAuth client is set up.
+          iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME || 'com.googleusercontent.apps.placeholder',
         },
       ],
     ],
