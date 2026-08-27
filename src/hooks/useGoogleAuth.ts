@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Alert } from 'react-native';
-import { GoogleSignin, isSuccessResponse, isErrorWithCode, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, isSuccessResponse, isErrorWithCode } from '@react-native-google-signin/google-signin';
 import { useAuth } from '../context/AuthContext';
 
 const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
@@ -21,22 +21,33 @@ export function useGoogleAuth() {
   const promptAsync = useCallback(async () => {
     if (isLoading) return;
     setIsLoading(true);
+    let idToken: string | undefined;
+    let email: string | undefined;
+    let name: string | undefined;
     try {
       const response = await GoogleSignin.signIn();
       if (!isSuccessResponse(response)) return; // user cancelled
 
-      const { idToken, user } = response.data;
+      idToken = response.data.idToken ?? undefined;
+      email = response.data.user.email;
+      name = response.data.user.name ?? undefined;
       if (!idToken) {
         Alert.alert('Error', 'Google sign-in did not return an ID token. Please try again.');
         return;
       }
-
-      await socialLogin('google', idToken, user.email, user.name ?? undefined);
     } catch (err: any) {
-      const message = isErrorWithCode(err) && err.code === statusCodes.IN_PROGRESS
-        ? 'Sign-in is already in progress.'
-        : 'Google sign-in failed. Please try again.';
-      Alert.alert('Error', message);
+      // TEMPORARY: surfacing the raw code/message to diagnose the real cause on-device.
+      const code = isErrorWithCode(err) ? err.code : 'unknown';
+      Alert.alert('Google sign-in error (native)', `code: ${code}\n${err?.message || String(err)}`);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await socialLogin('google', idToken, email, name);
+    } catch (err: any) {
+      // TEMPORARY: surfacing the raw message to diagnose the real cause on-device.
+      Alert.alert('Google sign-in error (backend)', err?.message || String(err));
     } finally {
       setIsLoading(false);
     }
