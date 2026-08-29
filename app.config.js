@@ -15,7 +15,11 @@ export default {
     },
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.carmarket.app',
+      // Different from the Android package (com.carmarket.app) -- that exact
+      // identifier is already claimed by an unrelated Apple Developer account
+      // in Apple's globally-unique App ID namespace, so a different one was
+      // needed here. They don't need to match across platforms.
+      bundleIdentifier: 'com.carmarket365.app',
       associatedDomains: [
         'applinks:carmarket365.com',
         'applinks:www.carmarket365.com',
