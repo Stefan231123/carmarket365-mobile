@@ -408,6 +408,7 @@ export const sq: MobileTranslations = {
     passwordPlaceholderRegister: 'Min 8 karaktere, shkronjë e madhe, e vogël, numër',
     repeatPassword: 'Përsëritni fjalëkalimin',
     continueWithGoogle: 'Vazhdo me Google',
+    continueWithApple: 'Vazhdo me Apple',
     orContinueWith: 'ose vazhdo me',
     registerAsDealer: 'Regjistrohu si tregtar',
     dealerName: 'Emri i kompanisë',

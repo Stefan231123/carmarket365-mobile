@@ -408,6 +408,7 @@ export const en: MobileTranslations = {
     passwordPlaceholderRegister: 'Min 8 chars, uppercase, lowercase, number',
     repeatPassword: 'Repeat your password',
     continueWithGoogle: 'Continue with Google',
+    continueWithApple: 'Continue with Apple',
     orContinueWith: 'or continue with',
     registerAsDealer: 'Register as a dealer',
     dealerName: 'Dealership Name',

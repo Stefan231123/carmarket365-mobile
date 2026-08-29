@@ -412,6 +412,7 @@ export interface MobileTranslations {
     passwordPlaceholderRegister: string;
     repeatPassword: string;
     continueWithGoogle: string;
+    continueWithApple: string;
     orContinueWith: string;
     registerAsDealer: string;
     dealerName: string;
