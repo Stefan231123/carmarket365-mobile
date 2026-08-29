@@ -22,6 +22,9 @@ export function useAppleAuth() {
   const promptAsync = useCallback(async () => {
     if (isLoading) return;
     setIsLoading(true);
+    let identityToken: string | undefined;
+    let email: string | undefined;
+    let name: string | undefined;
     try {
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -30,22 +33,32 @@ export function useAppleAuth() {
         ],
       });
 
-      const { identityToken, email, fullName } = credential;
-      if (!identityToken) {
-        Alert.alert('Error', 'Apple sign-in did not return an identity token. Please try again.');
-        return;
-      }
-
+      identityToken = credential.identityToken ?? undefined;
+      email = credential.email ?? undefined;
       // Only provided on the user's first sign-in; the backend independently
       // re-derives the authoritative email from the verified token either way.
-      const name = fullName
-        ? [fullName.givenName, fullName.familyName].filter(Boolean).join(' ') || undefined
+      name = credential.fullName
+        ? [credential.fullName.givenName, credential.fullName.familyName].filter(Boolean).join(' ') || undefined
         : undefined;
 
+      if (!identityToken) {
+        Alert.alert('Error', 'Apple sign-in did not return an identity token. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+    } catch (err: any) {
+      if (err?.code === 'ERR_REQUEST_CANCELED') { setIsLoading(false); return; } // user cancelled
+      // TEMPORARY: surfacing the raw code/message to diagnose the real cause on-device.
+      Alert.alert('Apple sign-in error (native)', `code: ${err?.code}\n${err?.message || String(err)}`);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
       await socialLogin('apple', identityToken, email ?? '', name);
     } catch (err: any) {
-      if (err?.code === 'ERR_REQUEST_CANCELED') return; // user cancelled, not an error
-      Alert.alert('Error', 'Apple sign-in failed. Please try again.');
+      // TEMPORARY: surfacing the raw message to diagnose the real cause on-device.
+      Alert.alert('Apple sign-in error (backend)', err?.message || String(err));
     } finally {
       setIsLoading(false);
     }
