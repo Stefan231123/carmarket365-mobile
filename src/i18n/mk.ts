@@ -408,6 +408,7 @@ export const mk: MobileTranslations = {
     passwordPlaceholderRegister: 'Мин 8 знаци, голема, мала буква, број',
     repeatPassword: 'Повторете ја лозинката',
     continueWithGoogle: 'Продолжи со Google',
+    continueWithApple: 'Продолжи со Apple',
     orContinueWith: 'или продолжи со',
     registerAsDealer: 'Регистрирај се како дилер',
     dealerName: 'Име на компанија',

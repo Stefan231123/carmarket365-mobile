@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../src/context/AuthContext';
 import { useLanguage } from '../src/context/LanguageContext';
 import { useGoogleAuth } from '../src/hooks/useGoogleAuth';
+import { useAppleAuth } from '../src/hooks/useAppleAuth';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../src/constants/theme';
 
 export default function RegisterScreen() {
@@ -25,6 +26,7 @@ export default function RegisterScreen() {
   const { t } = useLanguage();
   const router = useRouter();
   const { promptAsync, isLoading: googleLoading, isReady: googleReady } = useGoogleAuth();
+  const { promptAsync: promptAppleAsync, isLoading: appleLoading, isReady: appleReady } = useAppleAuth();
 
   // Navigate back when Google auth completes and user becomes authenticated
   useEffect(() => {
@@ -304,6 +306,24 @@ export default function RegisterScreen() {
               </>
             )}
           </Pressable>
+
+          {/* Apple Sign-In — iOS only, per App Store guideline 4.8 */}
+          {Platform.OS === 'ios' && (
+            <Pressable
+              style={[styles.googleButton, (appleLoading || !appleReady) && styles.buttonDisabled]}
+              onPress={promptAppleAsync}
+              disabled={appleLoading || !appleReady}
+            >
+              {appleLoading ? (
+                <ActivityIndicator color={COLORS.text} />
+              ) : (
+                <>
+                  <Ionicons name="logo-apple" size={20} color={COLORS.text} />
+                  <Text style={styles.googleButtonText}>{t.auth.continueWithApple}</Text>
+                </>
+              )}
+            </Pressable>
+          )}
 
           <Pressable
             style={styles.outlineButton}
