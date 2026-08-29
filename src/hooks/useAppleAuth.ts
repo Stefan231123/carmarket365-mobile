@@ -48,17 +48,15 @@ export function useAppleAuth() {
       }
     } catch (err: any) {
       if (err?.code === 'ERR_REQUEST_CANCELED') { setIsLoading(false); return; } // user cancelled
-      // TEMPORARY: surfacing the raw code/message to diagnose the real cause on-device.
-      Alert.alert('Apple sign-in error (native)', `code: ${err?.code}\n${err?.message || String(err)}`);
+      Alert.alert('Error', 'Apple sign-in failed. Please try again.');
       setIsLoading(false);
       return;
     }
 
     try {
       await socialLogin('apple', identityToken, email ?? '', name);
-    } catch (err: any) {
-      // TEMPORARY: surfacing the raw message to diagnose the real cause on-device.
-      Alert.alert('Apple sign-in error (backend)', err?.message || String(err));
+    } catch {
+      Alert.alert('Error', 'Something went wrong during sign-in. Please try again.');
     } finally {
       setIsLoading(false);
     }
