@@ -4,8 +4,13 @@ import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/goo
 import { useAuth } from '../context/AuthContext';
 
 const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '';
+const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || undefined;
 
-GoogleSignin.configure({ webClientId });
+// iOS has no GoogleService-Info.plist (we don't use Firebase), so it needs
+// its own client ID explicitly -- without it, iOS can't identify itself to
+// Google and sign-in fails silently. Android doesn't need this: it's looked
+// up automatically from the app's package name + signing certificate.
+GoogleSignin.configure({ webClientId, iosClientId });
 
 export function useGoogleAuth() {
   const { socialLogin } = useAuth();
