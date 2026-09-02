@@ -414,8 +414,8 @@ export default function HomeScreen() {
               <Text style={styles.searchButtonText}>{t.home.searchCars}</Text>
             </Pressable>
 
-            {/* Advanced Search Link */}
-            <Pressable onPress={() => router.push('/(tabs)/search')} style={styles.advancedLink}>
+            {/* Advanced Search Link -- jumps straight into the filter panel */}
+            <Pressable onPress={() => router.push('/(tabs)/search?openFilters=1')} style={styles.advancedLink}>
               <Text style={styles.advancedLinkText}>{t.home.advancedSearch}</Text>
             </Pressable>
           </View>

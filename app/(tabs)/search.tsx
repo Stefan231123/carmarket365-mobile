@@ -165,7 +165,7 @@ export default function SearchScreen() {
   const params = useLocalSearchParams<{
     make?: string; model?: string; minPrice?: string; maxPrice?: string;
     minYear?: string; maxYear?: string; maxMileage?: string; location?: string;
-    vehicleType?: string;
+    vehicleType?: string; openFilters?: string;
   }>();
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
@@ -200,6 +200,11 @@ export default function SearchScreen() {
         setFilters(incoming);
         lastAppliedParams.current = key;
       }
+    }
+    // Open the filter panel immediately when arriving via the home "Advanced
+    // Search" link.
+    if (params.openFilters) {
+      setFiltersVisible(true);
     }
   }, [params]);
 
