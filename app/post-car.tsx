@@ -14,8 +14,9 @@ import { uploadImageToS3 } from '../src/utils/s3-upload';
 import { useLanguage } from '../src/context/LanguageContext';
 import {
   CAR_MAKES, POPULAR_MAKE_NAMES, COMMON_FEATURES, COMMON_SAFETY,
-  MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES,
-  TRUCK_MAKES_SORTED, POPULAR_TRUCK_MAKES,
+  CAR_MODELS_BY_MAKE,
+  MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES, MOTORCYCLE_MODELS_BY_MAKE,
+  TRUCK_MAKES_SORTED, POPULAR_TRUCK_MAKES, TRUCK_MODELS_BY_MAKE,
 } from '../src/constants/car-data';
 import { VehicleType, FuelType, TransmissionType, CarCondition, DrivetrainType } from '../src/constants/enums';
 
@@ -107,6 +108,10 @@ export default function PostCarScreen() {
         if (f.vehicleType !== value) {
           return { ...f, vehicleType: value, make: '', model: '' };
         }
+      }
+      // Changing make invalidates the previously-picked model.
+      if (field === 'make' && typeof value === 'string' && f.make !== value) {
+        return { ...f, make: value, model: '' };
       }
       return { ...f, [field]: value };
     });
@@ -286,6 +291,17 @@ export default function PostCarScreen() {
           : isTruck
             ? TRUCK_MAKES_SORTED.map((m) => ({ label: m, value: m }))
             : CAR_MAKES.map((m) => ({ label: m, value: m }));
+      case 'model': {
+        // Filter to the models for the currently-selected make, using the
+        // right dataset per vehicle type.
+        if (!form.make) return [];
+        const modelsMap = isMotorcycle
+          ? MOTORCYCLE_MODELS_BY_MAKE
+          : isTruck
+            ? TRUCK_MODELS_BY_MAKE
+            : CAR_MODELS_BY_MAKE;
+        return (modelsMap[form.make] ?? []).map((m) => ({ label: m, value: m }));
+      }
       case 'vehicleType': return Object.values(VehicleType).map((v) => ({ label: translateEnum('vehicleTypes', v, t.enums), value: v }));
       case 'condition': return Object.values(CarCondition).map((v) => ({ label: translateEnum('conditions', v, t.enums), value: v }));
       case 'fuelType': return Object.values(FuelType).map((v) => ({ label: translateEnum('fuelTypes', v, t.enums), value: v }));
@@ -302,11 +318,15 @@ export default function PostCarScreen() {
     };
     const cat = enumMap[field];
     const displayVal = form[field] ? (cat ? translateEnum(cat, String(form[field]), t.enums) : String(form[field])) : placeholder;
+    // Model picker only makes sense after a make is picked (its options come
+    // from a per-make lookup); disable it visually and functionally otherwise.
+    const disabled = field === 'model' && !form.make;
     return (
       <View style={styles.inputGroup}>
         <Text style={styles.label}>{label}</Text>
         <Pressable
-          style={styles.selectButton}
+          style={[styles.selectButton, disabled && { opacity: 0.5 }]}
+          disabled={disabled}
           onPress={() => { setPickerField(field); setPickerVisible(true); }}
         >
           <Text style={form[field] ? styles.selectText : styles.selectPlaceholder}>
@@ -377,10 +397,14 @@ export default function PostCarScreen() {
         {step === 0 && (
           <View style={styles.stepCard}>
             {renderPickerButton(t.post.make + ' *', 'make', t.post.selectMake)}
-            {renderInput(t.post.model + ' *', 'model', { placeholder: t.post.enterModel, required: true })}
+            {renderPickerButton(
+              t.post.model + ' *',
+              'model',
+              form.make ? t.post.enterModel : t.post.selectMakeFirst,
+            )}
             {renderInput(t.post.variant, 'variant', { placeholder: t.post.variantPlaceholder })}
-            {renderInput(t.post.year + ' *', 'year', { placeholder: '2020', keyboardType: 'numeric', required: true })}
-            {renderInput(t.post.price + ' *', 'price', { placeholder: '15000', keyboardType: 'numeric', required: true })}
+            {renderInput(t.post.year, 'year', { placeholder: '2020', keyboardType: 'numeric', required: true })}
+            {renderInput(t.post.price, 'price', { placeholder: '15000', keyboardType: 'numeric', required: true })}
             {renderInput(t.post.mileage, 'mileage', { placeholder: '50000', keyboardType: 'numeric' })}
             {renderPickerButton(t.post.condition + ' *', 'condition', t.post.selectCondition)}
             {renderPickerButton(t.post.vehicleType + ' *', 'vehicleType', t.post.selectType)}
@@ -526,7 +550,7 @@ export default function PostCarScreen() {
             <View style={styles.pickerHeader}>
               <Text style={styles.pickerTitle}>{(() => {
                 const pickerTitleMap: Record<string, string> = {
-                  make: t.post.make, vehicleType: t.post.vehicleType, condition: t.post.condition,
+                  make: t.post.make, model: t.post.model, vehicleType: t.post.vehicleType, condition: t.post.condition,
                   fuelType: t.post.fuelType, transmission: t.post.transmission, drivetrain: t.post.drivetrain,
                 };
                 return pickerTitleMap[pickerField] || formatEnum(pickerField);
