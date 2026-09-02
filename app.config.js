@@ -20,6 +20,15 @@ export default {
       // in Apple's globally-unique App ID namespace, so a different one was
       // needed here. They don't need to match across platforms.
       bundleIdentifier: 'com.carmarket365.app',
+      infoPlist: {
+        // Only standard HTTPS/TLS is used (API calls, auth) -- exempt from US
+        // export compliance documentation requirements.
+        ITSAppUsesNonExemptEncryption: false,
+        // Override the generic default injected by expo-secure-store's plugin
+        // with a specific, user-facing purpose string per Apple guideline 5.1.1.
+        NSFaceIDUsageDescription:
+          'CarMarket365 uses Face ID so you can quickly and securely sign back in to your account without re-entering your password.',
+      },
       associatedDomains: [
         'applinks:carmarket365.com',
         'applinks:www.carmarket365.com',
@@ -125,17 +134,20 @@ export default {
       [
         'expo-location',
         {
-          locationAlwaysAndWhenInUsePermission:
-            'Allow CarMarket365 to use your location to find cars near you.',
+          // "When in use" only -- the app never uses background location.
+          locationWhenInUsePermission:
+            'CarMarket365 uses your location to show cars listed near you and to auto-fill your city when you post a listing.',
         },
       ],
       [
         'expo-image-picker',
         {
           photosPermission:
-            'Allow CarMarket365 to access your photos to add images to your car listing.',
+            'CarMarket365 needs access to your photos so you can attach car images to your listing and set a profile picture.',
           cameraPermission:
-            'Allow CarMarket365 to use your camera to take photos of your car.',
+            'CarMarket365 needs access to your camera so you can take photos of your car to attach to a listing.',
+          // Explicit disable -- the app never records audio.
+          microphonePermission: false,
         },
       ],
       [
