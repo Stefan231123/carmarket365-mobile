@@ -261,14 +261,16 @@ export default function EditListingScreen() {
               variables: {
                 input: {
                   carId: id,
-                  s3Key: uploaded.s3Key,
+                  url: uploaded.url,
                   fileName: uploaded.fileName,
+                  fileSize: uploaded.fileSize,
+                  mimeType: uploaded.mimeType,
                   sortOrder: startOrder + i,
-                  isMain: existingImages.length === 0 && i === 0,
                 },
               },
             });
-          } catch {
+          } catch (err) {
+            console.warn('Image upload failed:', err);
             failedUploads++;
           }
         }
