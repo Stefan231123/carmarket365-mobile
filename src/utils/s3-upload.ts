@@ -1,132 +1,92 @@
-import { gql, ApolloClient } from '@apollo/client';
+import * as SecureStore from 'expo-secure-store';
+import { API_URL } from '../constants/api';
 
-const GET_IMAGE_UPLOAD_URL = gql`
-  mutation GetImageUploadUrl($carId: String!, $fileName: String!) {
-    getImageUploadUrl(carId: $carId, fileName: $fileName) {
-      uploadUrl
-      key
-    }
-  }
-`;
+/** Base URL for REST endpoints (strip the trailing `/graphql` from API_URL). */
+const REST_BASE = API_URL.replace(/\/graphql\/?$/, '');
 
 export interface S3UploadResult {
-  s3Key: string;
+  /** Public URL of the uploaded object (what the backend wants in `createCarImage.url`). */
+  url: string;
+  /** Just the file name -- kept for the `fileName` metadata field on CarImage. */
   fileName: string;
+  /** Byte size and MIME of the actual bytes uploaded (for the CarImage record). */
+  fileSize: number;
+  mimeType: string;
 }
 
-interface PresignedUpload {
+interface PresignResponse {
   uploadUrl: string;
   key: string;
+  publicUrl: string;
 }
 
-interface GetImageUploadUrlData {
-  getImageUploadUrl: PresignedUpload;
+/** Pick a supported Content-Type from the URI / a fallback. Only JPEG/PNG/WEBP are accepted server-side. */
+function contentTypeFor(uri: string, blobType?: string): string {
+  const fromBlob = (blobType || '').toLowerCase();
+  if (fromBlob === 'image/jpeg' || fromBlob === 'image/png' || fromBlob === 'image/webp') return fromBlob;
+  const lower = uri.toLowerCase();
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.webp')) return 'image/webp';
+  return 'image/jpeg';
 }
 
-interface GetAvatarUploadUrlData {
-  getAvatarUploadUrl: PresignedUpload;
-}
+async function presign(kind: 'image' | 'avatar', fileName: string, contentType: string): Promise<PresignResponse> {
+  const token = await SecureStore.getItemAsync('accessToken');
+  if (!token) throw new Error('Not signed in — please sign in and try again.');
 
-interface ProcessAvatarData {
-  processAvatar: string;
-}
-
-export async function uploadImageToS3(
-  uri: string,
-  carId: string,
-  client: ApolloClient,
-  onProgress?: (progress: number) => void,
-): Promise<S3UploadResult> {
-  const fileName = uri.split('/').pop() || 'photo.jpg';
-
-  // 1. Get presigned URL from backend
-  const { data } = await client.mutate<GetImageUploadUrlData>({
-    mutation: GET_IMAGE_UPLOAD_URL,
-    variables: { carId, fileName },
+  const res = await fetch(`${REST_BASE}/api/uploads/presign`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ kind, fileName, contentType }),
   });
-  if (!data?.getImageUploadUrl) {
-    throw new Error('Failed to get an upload URL from the server');
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Failed to get an upload URL (HTTP ${res.status}): ${body.slice(0, 200)}`);
   }
-  const { uploadUrl, key } = data.getImageUploadUrl;
+  return res.json() as Promise<PresignResponse>;
+}
 
-  // 2. Read image from device URI
-  const response = await fetch(uri);
-  const blob = await response.blob();
-
-  // 3. Upload directly to S3 via presigned PUT with progress tracking
+async function putToS3(uploadUrl: string, blob: Blob, contentType: string, onProgress?: (p: number) => void): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) onProgress?.(e.loaded / e.total);
     };
-    xhr.onload = () => {
-      if (xhr.status < 400) {
-        resolve();
-      } else {
-        reject(new Error(`Upload failed with status ${xhr.status}`));
-      }
-    };
+    xhr.onload = () => (xhr.status < 400 ? resolve() : reject(new Error(`S3 upload failed with HTTP ${xhr.status}`)));
     xhr.onerror = () => reject(new Error('Network error during upload'));
     xhr.ontimeout = () => reject(new Error('Upload timed out'));
     xhr.timeout = 60000;
     xhr.open('PUT', uploadUrl);
-    xhr.setRequestHeader('Content-Type', blob.type || 'image/jpeg');
+    xhr.setRequestHeader('Content-Type', contentType);
     xhr.send(blob);
   });
-
-  return { s3Key: key, fileName };
 }
 
-const GET_AVATAR_UPLOAD_URL = gql`
-  mutation GetAvatarUploadUrl($fileName: String!) {
-    getAvatarUploadUrl(fileName: $fileName) {
-      uploadUrl
-      key
-    }
-  }
-`;
-
-const PROCESS_AVATAR = gql`
-  mutation ProcessAvatar($s3Key: String!) {
-    processAvatar(s3Key: $s3Key)
-  }
-`;
-
-export async function uploadAvatar(
+export async function uploadImageToS3(
   uri: string,
-  client: ApolloClient,
-): Promise<string> {
+  _carId: string, // kept for signature compatibility; presign is car-agnostic
+  _apolloClient: unknown, // kept for signature compatibility
+  onProgress?: (progress: number) => void,
+): Promise<S3UploadResult> {
+  const fileName = uri.split('/').pop() || 'photo.jpg';
+
+  const blob = await (await fetch(uri)).blob();
+  const contentType = contentTypeFor(uri, blob.type);
+  const { uploadUrl, publicUrl } = await presign('image', fileName, contentType);
+
+  await putToS3(uploadUrl, blob, contentType, onProgress);
+
+  return { url: publicUrl, fileName, fileSize: blob.size, mimeType: contentType };
+}
+
+export async function uploadAvatar(uri: string, _apolloClient?: unknown): Promise<string> {
   const fileName = uri.split('/').pop() || 'avatar.jpg';
-
-  // 1. Get presigned URL
-  const { data } = await client.mutate<GetAvatarUploadUrlData>({
-    mutation: GET_AVATAR_UPLOAD_URL,
-    variables: { fileName },
-  });
-  if (!data?.getAvatarUploadUrl) {
-    throw new Error('Failed to get an avatar upload URL from the server');
-  }
-  const { uploadUrl, key } = data.getAvatarUploadUrl;
-
-  // 2. Upload to S3
-  const response = await fetch(uri);
-  const blob = await response.blob();
-  const uploadResponse = await fetch(uploadUrl, {
-    method: 'PUT',
-    body: blob,
-    headers: { 'Content-Type': blob.type || 'image/jpeg' },
-  });
-  if (!uploadResponse.ok) {
-    throw new Error(`Avatar upload failed with status ${uploadResponse.status}`);
-  }
-
-  // 3. Process avatar on backend and get final URL
-  const { data: processData } = await client.mutate<ProcessAvatarData>({
-    mutation: PROCESS_AVATAR,
-    variables: { s3Key: key },
-  });
-  if (!processData?.processAvatar) {
-    throw new Error('Avatar processing failed on the server');
-  }
-  return processData.processAvatar;
+  const blob = await (await fetch(uri)).blob();
+  const contentType = contentTypeFor(uri, blob.type);
+  const { uploadUrl, publicUrl } = await presign('avatar', fileName, contentType);
+  await putToS3(uploadUrl, blob, contentType);
+  return publicUrl;
 }

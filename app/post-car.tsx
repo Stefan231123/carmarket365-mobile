@@ -240,14 +240,16 @@ export default function PostCarScreen() {
               variables: {
                 input: {
                   carId,
-                  s3Key: uploaded.s3Key,
+                  url: uploaded.url,
                   fileName: uploaded.fileName,
+                  fileSize: uploaded.fileSize,
+                  mimeType: uploaded.mimeType,
                   sortOrder: i,
-                  isMain: i === 0,
                 },
               },
             });
-          } catch {
+          } catch (err) {
+            console.warn('Image upload failed:', err);
             failedCount++;
           }
         }
