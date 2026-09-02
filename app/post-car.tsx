@@ -18,7 +18,23 @@ import {
   MOTORCYCLE_MAKES_SORTED, POPULAR_MOTORCYCLE_MAKES, MOTORCYCLE_MODELS_BY_MAKE,
   TRUCK_MAKES_SORTED, POPULAR_TRUCK_MAKES, TRUCK_MODELS_BY_MAKE,
 } from '../src/constants/car-data';
+import { MUNICIPALITIES_MK } from '../src/constants/locations';
 import { VehicleType, FuelType, TransmissionType, CarCondition, DrivetrainType } from '../src/constants/enums';
+
+// Preset dropdown values -- mirror what the Search screen already uses so
+// listers and searchers pick from the same vocabulary.
+const YEAR_OPTIONS = (() => {
+  const current = new Date().getFullYear();
+  const years: number[] = [];
+  for (let y = current + 1; y >= 1990; y--) years.push(y);
+  return years;
+})();
+const MILEAGE_OPTIONS = ['0', '10000', '25000', '50000', '75000', '100000', '150000', '200000', '250000', '300000'];
+const POWER_OPTIONS = ['50', '75', '100', '150', '200', '250', '300', '400', '500'];
+const ENGINE_SIZE_OPTIONS = ['800', '1000', '1200', '1400', '1600', '1800', '2000', '2500', '3000', '4000', '5000'];
+const DOOR_OPTIONS = ['2', '3', '4', '5'];
+const SEAT_OPTIONS = ['2', '4', '5', '6', '7', '9'];
+const COLOR_KEYS = ['Black', 'White', 'Silver', 'Gray', 'Blue', 'Red', 'Green', 'Brown', 'Yellow', 'Orange', 'Beige', 'Gold'];
 
 const CREATE_CAR = gql`
   mutation CreateCar($input: CreateCarInput!) {
@@ -282,8 +298,8 @@ export default function PostCarScreen() {
   const isMotorcycle = form.vehicleType === VehicleType.MOTORCYCLE;
   const isTruck = form.vehicleType === VehicleType.TRUCK;
 
-  const getPickerOptions = (): { label: string; value: string }[] => {
-    switch (pickerField) {
+  const getPickerOptions = (field: string = pickerField): { label: string; value: string }[] => {
+    switch (field) {
       case 'make':
         // Use the correct brand list for the selected vehicle type
         return isMotorcycle
@@ -307,6 +323,16 @@ export default function PostCarScreen() {
       case 'fuelType': return Object.values(FuelType).map((v) => ({ label: translateEnum('fuelTypes', v, t.enums), value: v }));
       case 'transmission': return Object.values(TransmissionType).map((v) => ({ label: translateEnum('transmissions', v, t.enums), value: v }));
       case 'drivetrain': return Object.values(DrivetrainType).map((v) => ({ label: translateEnum('drivetrains', v, t.enums), value: v }));
+      case 'year': return YEAR_OPTIONS.map((y) => ({ label: String(y), value: String(y) }));
+      case 'mileage': return MILEAGE_OPTIONS.map((v) => ({ label: `${Number(v).toLocaleString()} km`, value: v }));
+      case 'horsePower': return POWER_OPTIONS.map((v) => ({ label: `${v} HP`, value: v }));
+      case 'engineSize': return ENGINE_SIZE_OPTIONS.map((v) => ({ label: `${(Number(v) / 1000).toFixed(1)} L`, value: v }));
+      case 'doors': return DOOR_OPTIONS.map((v) => ({ label: v, value: v }));
+      case 'seats': return SEAT_OPTIONS.map((v) => ({ label: v === '9' ? '9+' : v, value: v }));
+      case 'color':
+      case 'interiorColor':
+        return COLOR_KEYS.map((c) => ({ label: (t.enums.colors as Record<string, string>)?.[c.toLowerCase()] || c, value: c }));
+      case 'city': return MUNICIPALITIES_MK.map((m) => ({ label: m.label, value: m.value }));
       default: return [];
     }
   };
@@ -317,7 +343,21 @@ export default function PostCarScreen() {
       transmission: 'transmissions', drivetrain: 'drivetrains',
     };
     const cat = enumMap[field];
-    const displayVal = form[field] ? (cat ? translateEnum(cat, String(form[field]), t.enums) : String(form[field])) : placeholder;
+    // For preset-value pickers (mileage, engineSize, horsePower, seats, color)
+    // the stored value is the raw number/key but the *display* uses the
+    // formatted option label ("50,000 km", "2.0 L", etc.). Re-derive from
+    // the option list for this field so what the user sees matches what
+    // they picked.
+    const raw = form[field] ? String(form[field]) : '';
+    let displayVal = placeholder;
+    if (raw) {
+      if (cat) {
+        displayVal = translateEnum(cat, raw, t.enums);
+      } else {
+        const opt = getPickerOptions(field as string).find((o) => o.value === raw);
+        displayVal = opt?.label ?? raw;
+      }
+    }
     // Model picker only makes sense after a make is picked (its options come
     // from a per-make lookup); disable it visually and functionally otherwise.
     const disabled = field === 'model' && !form.make;
@@ -403,9 +443,9 @@ export default function PostCarScreen() {
               form.make ? t.post.enterModel : t.post.selectMakeFirst,
             )}
             {renderInput(t.post.variant, 'variant', { placeholder: t.post.variantPlaceholder })}
-            {renderInput(t.post.year, 'year', { placeholder: '2020', keyboardType: 'numeric', required: true })}
+            {renderPickerButton(t.post.year + ' *', 'year', '2020')}
             {renderInput(t.post.price, 'price', { placeholder: '15000', keyboardType: 'numeric', required: true })}
-            {renderInput(t.post.mileage, 'mileage', { placeholder: '50000', keyboardType: 'numeric' })}
+            {renderPickerButton(t.post.mileage, 'mileage', '50,000 km')}
             {renderPickerButton(t.post.condition + ' *', 'condition', t.post.selectCondition)}
             {renderPickerButton(t.post.vehicleType + ' *', 'vehicleType', t.post.selectType)}
           </View>
@@ -417,12 +457,12 @@ export default function PostCarScreen() {
             {renderPickerButton(t.post.fuelType + ' *', 'fuelType', t.post.selectFuelType)}
             {renderPickerButton(t.post.transmission + ' *', 'transmission', t.post.selectTransmission)}
             {renderPickerButton(t.post.drivetrain, 'drivetrain', t.post.selectDrivetrain)}
-            {renderInput(t.post.engineSize, 'engineSize', { placeholder: '1998', keyboardType: 'numeric' })}
-            {renderInput(t.post.horsepower, 'horsePower', { placeholder: '150', keyboardType: 'numeric' })}
-            {renderInput(t.post.color, 'color', { placeholder: t.post.colorPlaceholder })}
-            {renderInput(t.post.interiorColor, 'interiorColor', { placeholder: t.post.interiorColorPlaceholder })}
-            {renderInput(t.post.doors, 'doors', { placeholder: '4', keyboardType: 'numeric' })}
-            {renderInput(t.post.seats, 'seats', { placeholder: '5', keyboardType: 'numeric' })}
+            {renderPickerButton(t.post.engineSize, 'engineSize', '2.0 L')}
+            {renderPickerButton(t.post.horsepower, 'horsePower', '150 HP')}
+            {renderPickerButton(t.post.color, 'color', t.post.colorPlaceholder)}
+            {renderPickerButton(t.post.interiorColor, 'interiorColor', t.post.interiorColorPlaceholder)}
+            {renderPickerButton(t.post.doors, 'doors', '4')}
+            {renderPickerButton(t.post.seats, 'seats', '5')}
           </View>
         )}
 
@@ -496,7 +536,7 @@ export default function PostCarScreen() {
 
             <Text style={styles.sectionTitle}>{t.post.contactAndLocation}</Text>
             {renderInput(t.post.location + ' *', 'location', { placeholder: t.post.locationPlaceholder, required: true })}
-            {renderInput(t.post.city, 'city', { placeholder: t.post.cityPlaceholder })}
+            {renderPickerButton(t.post.city, 'city', t.post.cityPlaceholder)}
             {renderInput(t.post.phone, 'contactPhone', { placeholder: t.post.phonePlaceholder, keyboardType: 'phone-pad' })}
             {renderInput(t.post.email, 'contactEmail', { placeholder: t.post.emailContactPlaceholder, keyboardType: 'email-address' })}
 
@@ -552,6 +592,9 @@ export default function PostCarScreen() {
                 const pickerTitleMap: Record<string, string> = {
                   make: t.post.make, model: t.post.model, vehicleType: t.post.vehicleType, condition: t.post.condition,
                   fuelType: t.post.fuelType, transmission: t.post.transmission, drivetrain: t.post.drivetrain,
+                  year: t.post.year, mileage: t.post.mileage, horsePower: t.post.horsepower,
+                  engineSize: t.post.engineSize, color: t.post.color, interiorColor: t.post.interiorColor,
+                  doors: t.post.doors, seats: t.post.seats, city: t.post.city,
                 };
                 return pickerTitleMap[pickerField] || formatEnum(pickerField);
               })()}</Text>
