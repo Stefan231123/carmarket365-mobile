@@ -2,7 +2,7 @@ export default {
   expo: {
     name: 'CarMarket365',
     slug: 'carmarket365-mobile',
-    version: '1.0.0',
+    version: '1.0.1',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
