@@ -305,6 +305,7 @@ export interface MobileTranslations {
     postListing: string;
     selectMake: string;
     enterModel: string;
+    selectMakeFirst: string;
     selectCondition: string;
     selectType: string;
     selectFuelType: string;
