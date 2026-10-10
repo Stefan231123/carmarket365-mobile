@@ -321,8 +321,17 @@ export default function PostCarScreen() {
       case 'vehicleType': return Object.values(VehicleType).map((v) => ({ label: translateEnum('vehicleTypes', v, t.enums), value: v }));
       case 'condition': return Object.values(CarCondition).map((v) => ({ label: translateEnum('conditions', v, t.enums), value: v }));
       case 'fuelType': return Object.values(FuelType).map((v) => ({ label: translateEnum('fuelTypes', v, t.enums), value: v }));
-      case 'transmission': return Object.values(TransmissionType).map((v) => ({ label: translateEnum('transmissions', v, t.enums), value: v }));
-      case 'drivetrain': return Object.values(DrivetrainType).map((v) => ({ label: translateEnum('drivetrains', v, t.enums), value: v }));
+      // CVT and 4-Wheel Drive are excluded from new listings (matches the
+      // website's SellCar form) -- AWD already covers 4x4, and CVT wasn't a
+      // real option sellers picked. Both stay in the enum + translateEnum so
+      // existing listings that already have these values still display them
+      // correctly in search filters / car detail / edit screens.
+      case 'transmission': return Object.values(TransmissionType)
+        .filter((v) => v !== TransmissionType.CVT)
+        .map((v) => ({ label: translateEnum('transmissions', v, t.enums), value: v }));
+      case 'drivetrain': return Object.values(DrivetrainType)
+        .filter((v) => v !== DrivetrainType.FOUR_WD)
+        .map((v) => ({ label: translateEnum('drivetrains', v, t.enums), value: v }));
       case 'year': return YEAR_OPTIONS.map((y) => ({ label: String(y), value: String(y) }));
       case 'mileage': return MILEAGE_OPTIONS.map((v) => ({ label: `${Number(v).toLocaleString()} km`, value: v }));
       case 'horsePower': return POWER_OPTIONS.map((v) => ({ label: `${v} HP`, value: v }));
