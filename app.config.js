@@ -29,8 +29,13 @@ export default {
         NSFaceIDUsageDescription:
           'CarMarket365 uses Face ID so you can quickly and securely sign back in to your account without re-entering your password.',
       },
+      // Only www.carmarket365.com -- the bare apex domain 307-redirects to
+      // www (Vercel domain setting) instead of serving
+      // apple-app-site-association/assetlinks.json directly, which fails
+      // Android's App Links verification (Play Console flags it as
+      // "Failed domain checks"). All real site URLs (SEO canonical, share
+      // links) already use www, so the apex entry was unused in practice.
       associatedDomains: [
-        'applinks:carmarket365.com',
         'applinks:www.carmarket365.com',
       ],
       privacyManifests: {
@@ -98,11 +103,6 @@ export default {
           action: 'VIEW',
           autoVerify: true,
           data: [
-            {
-              scheme: 'https',
-              host: 'carmarket365.com',
-              pathPrefix: '/cars',
-            },
             {
               scheme: 'https',
               host: 'www.carmarket365.com',
